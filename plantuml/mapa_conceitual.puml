@@ -1,0 +1,16 @@
+@startuml
+node "Igreja" as I
+node "Famílias Assistidas" as F
+node "Estoque de Doações" as E
+node "Alimentos" as A
+node "Roupas" as R
+node "Voluntários" as V
+
+I --> F : atende
+I --> E : possui
+I --> V : é coordenada por
+E --> A : contém
+E --> R : contém
+V --> F : entregam doações para
+V --> E : gerenciam
+@enduml

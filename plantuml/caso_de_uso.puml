@@ -1,0 +1,17 @@
+@startuml
+left to right direction
+actor "Voluntário" as vol
+
+package "Aplicativo Dorcas" {
+  usecase "Realizar Login" as UC1
+  usecase "Cadastrar Família" as UC2
+  usecase "Buscar Família" as UC3
+  usecase "Dar Baixa em Doação" as UC4
+}
+
+vol --> UC1
+vol --> UC2
+vol --> UC3
+vol --> UC4
+UC4 .> UC3 : <<include>>
+@enduml

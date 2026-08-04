@@ -1,0 +1,27 @@
+@startuml
+class Familia {
+  - id_familia: int
+  - nome_responsavel: String
+  + getPerfilPublico()
+}
+
+abstract class Doacao {
+  - codigo: int
+  - descricao: String
+  - quantidade_estoque: int
+  + darBaixa(qtd: int)
+}
+
+class Alimento {
+  - data_validade: Date
+  + estaVencido()
+}
+
+class Roupa {
+  - tamanho: String
+  - genero: String
+}
+
+Doacao <|-- Alimento
+Doacao <|-- Roupa
+@enduml

@@ -1,0 +1,18 @@
+@startuml
+actor "Voluntário" as V
+participant "App Dorcas" as App
+participant "Servidor Node.js" as Srv
+database "Banco de Dados" as BD
+
+V -> App : Pesquisa Família
+App -> Srv : GET /api/familias?busca=X
+Srv -> BD : SELECT * FROM Familia
+BD --> Srv : Retorna Registros
+Srv --> App : Retorna JSON (Encapsulado)
+V -> App : Solicita Baixa de Item
+App -> Srv : POST /api/atendimentos/baixa
+Srv -> BD : UPDATE Estoque_Doacao SET qtd = qtd - X
+BD --> Srv : Confirmação
+Srv --> App : Recibo Gerado
+App --> V : Confirmação Visual
+@enduml

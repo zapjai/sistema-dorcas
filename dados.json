@@ -1,0 +1,314 @@
+{
+  "familias": [
+    {
+      "id": 1,
+      "nome": "Daniela Weder Morinigo",
+      "doc": "2.581.604",
+      "endereco": "Rua 14 de Julho, 5141",
+      "tel": "(67) 99893-0679",
+      "necessitaCesta": true
+    },
+    {
+      "id": 2,
+      "nome": "Gislaine Aparecida Cordeiro",
+      "doc": "3.124.890",
+      "endereco": "Av. Afonso Pena, 1200",
+      "tel": "(67) 99123-4567",
+      "necessitaCesta": true
+    },
+    {
+      "id": 3,
+      "nome": "JAIR BATISTA GOMES",
+      "doc": "546.695.536.56",
+      "endereco": "Avenida Ministro João Arinos, 2138",
+      "tel": "6733122403",
+      "necessitaCesta": true
+    }
+  ],
+  "estoque": [
+    {
+      "codigo": 101,
+      "categoria": "Alimento",
+      "descricao": "Arroz 5kg",
+      "quantidadeEstoque": 6,
+      "dataValidade": "2026-11-20",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 102,
+      "categoria": "Alimento",
+      "descricao": "Feijão 1kg",
+      "quantidadeEstoque": 12,
+      "dataValidade": "2026-09-15",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 103,
+      "categoria": "Alimento",
+      "descricao": "Açúcar 2kg",
+      "quantidadeEstoque": 7,
+      "dataValidade": "2026-12-01",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 104,
+      "categoria": "Alimento",
+      "descricao": "Óleo de Soja",
+      "quantidadeEstoque": 12,
+      "dataValidade": "2026-10-10",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 105,
+      "categoria": "Alimento",
+      "descricao": "Flocão",
+      "quantidadeEstoque": 6,
+      "dataValidade": "2026-08-30",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 106,
+      "categoria": "Alimento",
+      "descricao": "Farofa",
+      "quantidadeEstoque": 6,
+      "dataValidade": "2026-09-01",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 107,
+      "categoria": "Alimento",
+      "descricao": "Fubá",
+      "quantidadeEstoque": 6,
+      "dataValidade": "2026-08-15",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 108,
+      "categoria": "Alimento",
+      "descricao": "Trigo",
+      "quantidadeEstoque": 12,
+      "dataValidade": "2026-11-01",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 109,
+      "categoria": "Alimento",
+      "descricao": "Macarrão Spaguetti",
+      "quantidadeEstoque": 5,
+      "dataValidade": "2027-01-01",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 110,
+      "categoria": "Alimento",
+      "descricao": "Macarrão Parafuso",
+      "quantidadeEstoque": 7,
+      "dataValidade": "2027-01-01",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 111,
+      "categoria": "Alimento",
+      "descricao": "Molho de Tomate",
+      "quantidadeEstoque": 12,
+      "dataValidade": "2026-12-30",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 112,
+      "categoria": "Alimento",
+      "descricao": "Bolacha Salgada",
+      "quantidadeEstoque": 5,
+      "dataValidade": "2026-09-10",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 113,
+      "categoria": "Alimento",
+      "descricao": "Bolacha Doce",
+      "quantidadeEstoque": 7,
+      "dataValidade": "2026-09-10",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 114,
+      "categoria": "Alimento",
+      "descricao": "Milho Pipoca",
+      "quantidadeEstoque": 6,
+      "dataValidade": "2026-10-20",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 201,
+      "categoria": "Higiene",
+      "descricao": "Sabão em Barra",
+      "quantidadeEstoque": 13,
+      "dataValidade": null,
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 202,
+      "categoria": "Higiene",
+      "descricao": "Sabonete",
+      "quantidadeEstoque": 26,
+      "dataValidade": null,
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 203,
+      "categoria": "Higiene",
+      "descricao": "Creme Dental",
+      "quantidadeEstoque": 13,
+      "dataValidade": null,
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 204,
+      "categoria": "Higiene",
+      "descricao": "Papel Higiênico",
+      "quantidadeEstoque": 13,
+      "dataValidade": null,
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 301,
+      "categoria": "Roupa",
+      "descricao": "Agasalho de Frio",
+      "quantidadeEstoque": 9,
+      "dataValidade": null,
+      "tamanho": "G",
+      "genero": "Masculino"
+    },
+    {
+      "codigo": 302,
+      "categoria": "Alimento",
+      "descricao": "arroz",
+      "quantidadeEstoque": 15,
+      "dataValidade": "2026-12-09",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 303,
+      "categoria": "Higiene",
+      "descricao": "sabonete",
+      "quantidadeEstoque": 20,
+      "dataValidade": null,
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 304,
+      "categoria": "Alimento",
+      "descricao": "feijão",
+      "quantidadeEstoque": 16,
+      "dataValidade": "2027-01-27",
+      "tamanho": null,
+      "genero": null
+    },
+    {
+      "codigo": 305,
+      "categoria": "Alimento",
+      "descricao": "açucar",
+      "quantidadeEstoque": 9,
+      "dataValidade": "2026-07-31",
+      "tamanho": null,
+      "genero": null
+    }
+  ],
+  "historico": [
+    {
+      "idAtendimento": 1,
+      "familia": "Daniela Weder Morinigo",
+      "itemEntregue": "1x Cesta Básica Completa",
+      "dataAtendimento": "31/07/2026, 16:15:26"
+    },
+    {
+      "idAtendimento": 2,
+      "familia": "Gislaine Aparecida Cordeiro",
+      "itemEntregue": "1x Cesta Básica Completa",
+      "dataAtendimento": "31/07/2026, 16:17:07"
+    },
+    {
+      "idAtendimento": 3,
+      "familia": "Gislaine Aparecida Cordeiro",
+      "itemEntregue": "1x Cesta Básica Completa",
+      "dataAtendimento": "01/08/2026, 12:25:02"
+    },
+    {
+      "idAtendimento": 4,
+      "familia": "Gislaine Aparecida Cordeiro",
+      "itemEntregue": "1x Cesta de Higiene Completa",
+      "dataAtendimento": "01/08/2026, 12:25:17"
+    },
+    {
+      "idAtendimento": 5,
+      "familia": "JAIR BATISTA GOMES",
+      "itemEntregue": "Vestuário: 3x Agasalho de Frio (Tam: G)",
+      "dataAtendimento": "03/08/2026, 15:59:33"
+    },
+    {
+      "idAtendimento": 6,
+      "familia": "Daniela Weder Morinigo",
+      "itemEntregue": "1x Cesta Básica Completa (Alimentos + Higiene)",
+      "dataAtendimento": "04/08/2026, 08:47:12"
+    }
+  ],
+  "historicoEspiritual": [
+    {
+      "id": 1,
+      "dataHora": "03/08/2026, 16:58:24",
+      "familia": "Daniela Weder Morinigo",
+      "atendente": "Rosimeire Cordeiro",
+      "tipoAssistencia": "Estudo Bíblico"
+    }
+  ],
+  "usuarios": [
+    {
+      "id": 1,
+      "nome": "Jair Batista Gomes",
+      "email": "jair@dorcas.org",
+      "senhaHash": "$2a$08$Ym63LG0l0/CzznlTrp6yyuLuJWdde3QhS6kKwqkSMbaF4V.pOBfhW",
+      "cargo": "Administrador"
+    },
+    {
+      "id": 2,
+      "nome": "Karina Gomes",
+      "email": "karina@dorcas.org",
+      "senhaHash": "$2a$08$FtJk0jdRlLVnmAvp/yjXOO2E3rh8hBmZNlRkFCal5bkOfvIwi9tzO",
+      "cargo": "Voluntário"
+    },
+    {
+      "id": 3,
+      "nome": "Jair Gomes",
+      "email": "zapjai@gmail.com",
+      "senhaHash": "$2a$08$4cXz.eA.yLhgCP6q9WAwYeetWlgH6mQUvlqgIHoMAw7oEXmqT0Oay",
+      "cargo": "Administrador"
+    },
+    {
+      "id": 4,
+      "nome": "Jair",
+      "email": "jair@msgas.com.br",
+      "senhaHash": "$2a$08$q9ogSzFnCW4RpvcJpig8W.ZmgSc9t2O6h6lVxhd5pZ6N73ohvHJ8G",
+      "cargo": "Administrador"
+    }
+  ]
+}

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicativo Dorcas - Gestão Solidária</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- 1. TELA / MODAL DE LOGIN -->
+    <div id="screenLogin" class="login-overlay">
+        <div class="login-card">
+            <div class="login-header">
+                <i class="fa-solid fa-hand-holding-heart login-logo"></i>
+                <h2>Aplicativo Dorcas</h2>
+                <p>Gestão Solidária & Triagem - ASA Amambaí</p>
+            </div>
+            
+            <!-- FORMULÁRIO DE LOGIN PRINCIPAL -->
+            <form id="formLogin" onsubmit="realizarLogin(event)">
+                <div class="form-group">
+                    <label><i class="fa-solid fa-envelope"></i> E-mail de Acesso:</label>
+                    <input type="email" id="loginEmail" required placeholder="Ex: jair@dorcas.org" value="jair@dorcas.org">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-key"></i> Senha:</label>
+                    <input type="password" id="loginSenha" required placeholder="Digite sua senha" value="123456">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-right-to-bracket"></i> Entrar no Sistema</button>
+                
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="#" onclick="alternarFormEsqueciSenha(true)" style="color: #0284c7; text-decoration: none; font-size: 0.9rem;">
+                        <i class="fa-solid fa-unlock-keyhole"></i> Esqueci minha senha
+                    </a>
+                </div>
+            </form>
+
+            <!-- FORMULÁRIO "ESQUECI MINHA SENHA" (INICIALMENTE OCULTO) -->
+            <form id="formEsqueciSenha" class="hidden" onsubmit="solicitarNovaSenha(event)">
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Informe seu e-mail cadastrado. Uma nova senha gerada pelo sistema será enviada para você.</p>
+                <div class="form-group">
+                    <label><i class="fa-solid fa-envelope"></i> E-mail Cadastrado:</label>
+                    <input type="email" id="esqueciEmail" required placeholder="Seu e-mail cadastrado">
+                </div>
+                <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-paper-plane"></i> Enviar Nova Senha</button>
+                
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="#" onclick="alternarFormEsqueciSenha(false)" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">
+                        <i class="fa-solid fa-arrow-left"></i> Voltar ao Login
+                    </a>
+                </div>
+            </form>
+
+            <div id="msgLogin" class="feedback-msg"></div>
+        </div>
+    </div>
+
+    <!-- 2. PAINEL PRINCIPAL DO SISTEMA -->
+    <div id="screenApp" class="hidden">
+        <header class="navbar">
+            <div class="container nav-container">
+                <div class="brand">
+                    <i class="fa-solid fa-hand-holding-heart logo-icon"></i>
+                    <div>
+                        <h1>Aplicativo Dorcas</h1>
+                        <span class="subtitle">Gestão Solidária & Triagem - ASA Amambaí</span>
+                    </div>
+                </div>
+                <div class="user-badge">
+                    <i class="fa-solid fa-user-check"></i> <span id="labelNomeUsuario">Voluntário Logado</span>
+                    <button class="btn-logout" onclick="fazerLogout()" title="Sair do Sistema"><i class="fa-solid fa-right-from-bracket"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="container main-content">
+            <section class="dashboard-grid">
+                <div class="card card-blue">
+                    <div class="card-icon"><i class="fa-solid fa-users"></i></div>
+                    <div>
+                        <h3>Famílias Assistidas</h3>
+                        <p class="metric" id="totalFamilias">0 Cadastradas</p>
+                    </div>
+                </div>
+                <div class="card card-green">
+                    <div class="card-icon"><i class="fa-solid fa-basket-shopping"></i></div>
+                    <div>
+                        <h3>Cestas Básicas Completas</h3>
+                        <p class="metric" id="totalCestasBasicas">0 Cestas</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Menu de Navegação por Abas -->
+            <nav class="tabs-nav">
+                <button class="tab-btn active" onclick="alternarAba('operacoes')"><i class="fa-solid fa-handshake"></i> Triagem & Atendimento</button>
+                <button class="tab-btn" onclick="alternarAba('estoque')"><i class="fa-solid fa-boxes-stacked"></i> Estoque Geral</button>
+                <button class="tab-btn" onclick="alternarAba('cadastros')"><i class="fa-solid fa-folder-plus"></i> Novas Entradas / Cadastros</button>
+                <button class="tab-btn" onclick="alternarAba('espiritual')"><i class="fa-solid fa-hands-praying"></i> Assistência Espiritual</button>
+                <button class="tab-btn" onclick="alternarAba('usuarios')"><i class="fa-solid fa-user-gear"></i> Usuários</button> <!-- NOVA ABA -->
+                <button class="tab-btn" onclick="alternarAba('historico')"><i class="fa-solid fa-receipt"></i> Histórico de Recibos</button>
+                <button class="tab-btn" onclick="alternarAba('relatorio')"><i class="fa-solid fa-chart-pie"></i> Relatório de Faltantes</button>
+            </nav>
+
+            <!-- ABA 1: TRIAGEM & ATENDIMENTO -->
+            <div id="aba-operacoes" class="tab-content active">
+                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
+                <section class="operations-container">
+                    <div class="panel">
+                        <h2><i class="fa-solid fa-magnifying-glass"></i> Consultar Assistido</h2>
+                        <div class="search-box">
+                            <input type="text" id="inputBusca" placeholder="Digite o nome..." onkeyup="buscarFamilias()">
+                            <button class="btn btn-primary" onclick="buscarFamilias()"><i class="fa-solid fa-search"></i> Buscar</button>
+                        </div>
+                        <div id="listaFamilias" class="familias-list"></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2><i class="fa-solid fa-box-open"></i> Registrar Baixa de Doação</h2>
+                        <form id="formBaixa" onsubmit="registrarBaixa(event)">
+                            <div class="form-group">
+                                <label>Família Beneficiária:</label>
+                                <select id="selectFamilia" required><option value="">-- Selecione uma família --</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo de Entrega / Doação:</label>
+                                <select id="selectTipoEntrega" onchange="alternarTipoEntrega()" required>
+                                    <option value="CESTA_BASICA">Cesta Básica Completa (Alimentos + Higiene)</option>
+                                    <option value="CARRINHO_ROUPAS">Carrinho de Roupas / Vestuário</option>
+                                    <option value="AVULSO">Item Avulso (Alimento ou Higiene)</option>
+                                </select>
+                            </div>
+                            
+                            <div id="campoItemAvulso" class="form-group hidden">
+                                <label>Item do Estoque:</label>
+                                <select id="selectItemAvulso"><option value="">-- Selecione o item --</option></select>
+                                <label style="margin-top:10px;">Quantidade Entregue:</label>
+                                <input type="number" id="inputQuantidade" min="1" value="1">
+                            </div>
+
+                            <div id="painelCarrinhoRoupas" class="form-group hidden" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 15px;">
+                                <h3 style="font-size: 0.95rem; color: var(--primary-color); margin-bottom: 10px;"><i class="fa-solid fa-shirt"></i> Selecionar Peças de Roupa</h3>
+                                <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                                    <select id="selectRoupaEstoque" style="flex: 2;"><option value="">-- Selecione a peça --</option></select>
+                                    <input type="number" id="qtdRoupaItem" min="1" value="1" placeholder="Qtd" style="flex: 1;">
+                                    <button type="button" class="btn btn-primary" onclick="adicionarAoCarrinho()"><i class="fa-solid fa-plus"></i> Add</button>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="data-table" style="font-size: 0.85rem; background: #fff;">
+                                        <thead>
+                                            <tr><th>Peça / Tamanho</th><th>Qtd</th><th>Ação</th></tr>
+                                        </thead>
+                                        <tbody id="tabelaCarrinho"><tr><td colspan="3" style="text-align:center; color:#888;">Carrinho vazio</td></tr></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-check-circle"></i> Confirmar Baixa / Emissão de Recibo</button>
+                        </form>
+                        <div id="mensagemFeedback" class="feedback-msg"></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ABA 2: ESTOQUE GERAL -->
+            <div id="aba-estoque" class="tab-content">
+                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
+                <section class="panel full-width">
+                    <h2><i class="fa-solid fa-list-check"></i> Estoque Atual de Itens Individuais (Composição)</h2>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Categoria</th>
+                                    <th>Descrição / Produto</th>
+                                    <th>Detalhes / Tamanho</th>
+                                    <th>Validade</th>
+                                    <th>Quantidade em Estoque</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaEstoque"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ABA 3: NOVAS ENTRADAS / CADASTROS -->
+            <div id="aba-cadastros" class="tab-content">
+                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
+                <section class="operations-container">
+                    <div class="panel">
+                        <h2><i class="fa-solid fa-user-plus"></i> Cadastrar Família Assistida</h2>
+                        <form id="formCadFamilia" onsubmit="cadastrarFamilia(event)">
+                            <div class="form-group"><label>Nome do Responsável:</label><input type="text" id="cadNome" required placeholder="Ex: Maria da Silva"></div>
+                            <div class="form-group"><label>Documento de Identificação (CPF/RG):</label><input type="text" id="cadDoc" required placeholder="Ex: 123.456.789-00"></div>
+                            <div class="form-group"><label>Endereço Residencial:</label><input type="text" id="cadEndereco" required placeholder="Ex: Rua A, 123"></div>
+                            <div class="form-group"><label>Telefone de Contato:</label><input type="text" id="cadTelefone" required placeholder="Ex: (67) 99999-0000"></div>
+                            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-save"></i> Salvar Família</button>
+                        </form>
+                        <div id="msgCadFamilia" class="feedback-msg"></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2><i class="fa-solid fa-truck-ramp-box"></i> Nova Entrada no Estoque (Triagem)</h2>
+                        <form id="formCadEstoque" onsubmit="cadastrarEstoque(event)">
+                            <div class="form-group">
+                                <label>Categoria do Item:</label>
+                                <select id="cadCategoria" onchange="alternarCamposCategoria()" required>
+                                    <option value="Alimento">Alimento (Cesta Básica)</option>
+                                    <option value="Higiene">Higiene Pessoal</option>
+                                    <option value="Roupa">Roupa / Vestuário</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Descrição / Produto:</label><input type="text" id="cadDescricao" required placeholder="Ex: Feijão 1kg, Sabonete, etc."></div>
+                            <div class="form-group"><label>Quantidade Recebida:</label><input type="number" id="cadQtd" min="1" value="1" required></div>
+                            <div id="campoValidade" class="form-group"><label>Data de Validade:</label><input type="date" id="cadValidade"></div>
+                            <div id="camposRoupa" class="form-group hidden">
+                                <label>Tamanho:</label>
+                                <select id="cadTamanho"><option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option><option value="Infantil">Infantil</option></select>
+                                <label style="margin-top:10px;">Gênero:</label>
+                                <select id="cadGenero"><option value="Unissex">Unissex</option><option value="Masculino">Masculino</option><option value="Feminino">Feminino</option><option value="Infantil">Infantil</option></select>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-plus-circle"></i> Adicionar ao Estoque</button>
+                        </form>
+                        <div id="msgCadEstoque" class="feedback-msg"></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ABA 4: ASSISTÊNCIA ESPIRITUAL -->
+            <div id="aba-espiritual" class="tab-content">
+                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
+                <section class="operations-container">
+                    <div class="panel">
+                        <h2><i class="fa-solid fa-cross"></i> Registrar Atendimento Espiritual</h2>
+                        <form id="formAssistenciaEspiritual" onsubmit="registrarAssistenciaEspiritual(event)">
+                            <div class="form-group">
+                                <label>Família Beneficiária:</label>
+                                <select id="selectFamiliaEspiritual" required>
+                                    <option value="">-- Selecione uma família --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Voluntário / Responsável pela Assistência:</label>
+                                <input type="text" id="inputAtendenteEspiritual" placeholder="Ex: Voluntário João" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo e Descrição da Assistência:</label>
+                                <textarea id="inputTipoEspiritual" rows="3" placeholder="Ex: Oração no lar, Estudo Bíblico, Aconselhamento, Visita Pastoral..." required style="width:100%; padding:8px; border-radius:4px; border:1px solid #ccc;"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-save"></i> Salvar Atendimento Espiritual</button>
+                        </form>
+                        <div id="msgEspiritual" class="feedback-msg"></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2><i class="fa-solid fa-list"></i> Histórico de Acompanhamento Espiritual</h2>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data / Hora</th>
+                                        <th>Família</th>
+                                        <th>Assistido Por</th>
+                                        <th>Descrição / Atendimento</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaEspiritual">
+                                    <tr><td colspan="4" style="text-align:center; color:#888;">Carregando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ABA 5: USUÁRIOS DO SISTEMA (NOVA ABA) -->
+            <div id="aba-usuarios" class="tab-content">
+                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
+                <section class="operations-container">
+                    <div class="panel">
+                        <h2><i class="fa-solid fa-user-plus"></i> Novo Usuário do Sistema</h2>
+                        <form id="formNovoUsuario" onsubmit="cadastrarUsuario(event)">
+                            <div class="form-group">
+                                <label>Nome do Voluntário / Usuário:</label>
+                                <input type="text" id="usrNome" required placeholder="Ex: Maria Eduarda">
+                            </div>
+                            <div class="form-group">
+                                <label>E-mail Válido de Acesso:</label>
+                                <input type="email" id="usrEmail" required placeholder="Ex: maria@dorcas.org">
+                            </div>
+                            <div class="form-group">
+                                <label>Perfil de Acesso / Cargo:</label>
+                                <select id="usrCargo" required>
+                                    <option value="Voluntário">Voluntário</option>
+                                    <option value="Administrador">Administrador</option>
+                                </select>
+                            </div>
+                            <p style="font-size:0.8rem; color:#64748b; margin-bottom:10px;">
+                                <i class="fa-solid fa-info-circle"></i> Uma senha temporária será gerada automaticamente e enviada para o e-mail informado.
+                            </p>
+                            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-paper-plane"></i> Cadastrar & Enviar Senha por E-mail</button>
+                        </form>
+                        <div id="msgCadUsuario" class="feedback-msg"></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2><i class="fa-solid fa-users-gear"></i> Usuários Cadastrados</h2>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>E-mail</th>
+                                        <th>Cargo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaUsuarios">
+                                    <tr><td colspan="3" style="text-align:center; color:#888;">Carregando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ABA 6: HISTÓRICO DE RECIBOS -->
+            <div id="aba-historico" class="tab-content">
+                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
+                <section class="panel full-width">
+                    <h2><i class="fa-solid fa-history"></i> Histórico de Entregas & Recibos Emitidos</h2>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Recibo N°</th><th>Data / Hora</th><th>Família Beneficiária</th><th>Descrição da Doação Entregue</th></tr>
+                            </thead>
+                            <tbody id="tabelaHistorico"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ABA 7: RELATÓRIO DE FALTANTES -->
+            <div id="aba-relatorio" class="tab-content">
+                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
+                <section class="panel full-width">
+                    <h2><i class="fa-solid fa-chart-pie"></i> Déficit para Montagem da Cesta Básica Completa</h2>
+                    
+                    <div id="cardMetaCestas" style="background: #e0f2fe; border-left: 5px solid #0284c7; padding: 15px; margin-bottom: 20px; border-radius: 6px;">
+                        <h3 style="margin: 0; color: #0369a1; font-size: 1.1rem;">
+                            <i class="fa-solid fa-bullseye"></i> Meta para Equiparar o Estoque: <span id="labelMetaCestas" style="font-weight: bold; text-decoration: underline;">0 Cestas</span>
+                        </h3>
+                        <p style="margin: 5px 0 0 0; color: #334155; font-size: 0.9rem;">
+                            Completando os itens abaixo, será possível formar exatamente o quantitativo de cestas indicado acima.
+                        </p>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Item Necessário</th>
+                                    <th>Em Estoque</th>
+                                    <th>Faltante (Déficit)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaFaltantesUnificado"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
