@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <!-- 1. TELA / MODAL DE LOGIN -->
+    <!-- 1. TELA / MODAL DE LOGIN REFORMULADA -->
     <div id="screenLogin" class="login-overlay">
         <div class="login-card">
             <div class="login-header">
@@ -18,7 +18,7 @@
                 <p>Gestão Solidária & Triagem - ASA Amambaí</p>
             </div>
             
-            <!-- FORMULÁRIO DE LOGIN PRINCIPAL -->
+            <!-- FORMULÁRIO 1: LOGIN PRINCIPAL -->
             <form id="formLogin" onsubmit="realizarLogin(event)">
                 <div class="form-group">
                     <label><i class="fa-solid fa-envelope"></i> E-mail de Acesso:</label>
@@ -31,26 +31,43 @@
                 <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-right-to-bracket"></i> Entrar no Sistema</button>
                 
                 <div style="text-align: center; margin-top: 15px;">
-                    <a href="#" onclick="alternarFormEsqueciSenha(true)" style="color: #0284c7; text-decoration: none; font-size: 0.9rem;">
+                    <a href="#" onclick="alternarTelasLogin('esqueci')" style="color: #0284c7; text-decoration: none; font-size: 0.9rem;">
                         <i class="fa-solid fa-unlock-keyhole"></i> Esqueci minha senha
                     </a>
                 </div>
             </form>
 
-            <!-- FORMULÁRIO "ESQUECI MINHA SENHA" -->
+            <!-- FORMULÁRIO 2: ESQUECI MINHA SENHA -->
             <form id="formEsqueciSenha" class="hidden" onsubmit="solicitarNovaSenha(event)">
-                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Informe seu e-mail cadastrado. Uma nova senha gerada pelo sistema será enviada para você.</p>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Informe seu e-mail cadastrado. Uma senha temporária será enviada para você.</p>
                 <div class="form-group">
                     <label><i class="fa-solid fa-envelope"></i> E-mail Cadastrado:</label>
                     <input type="email" id="esqueciEmail" required placeholder="Seu e-mail cadastrado">
                 </div>
-                <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-paper-plane"></i> Enviar Nova Senha</button>
+                <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-paper-plane"></i> Enviar Senha Temporária</button>
                 
                 <div style="text-align: center; margin-top: 15px;">
-                    <a href="#" onclick="alternarFormEsqueciSenha(false)" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">
+                    <a href="#" onclick="alternarTelasLogin('login')" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">
                         <i class="fa-solid fa-arrow-left"></i> Voltar ao Login
                     </a>
                 </div>
+            </form>
+
+            <!-- FORMULÁRIO 3: REDEFINIÇÃO OBRIGATÓRIA (APARECE APÓS USAR A SENHA TEMPORÁRIA) -->
+            <form id="formRedefinirNovaSenha" class="hidden" onsubmit="salvarNovaSenhaDefinitiva(event)">
+                <p style="font-size: 0.85rem; color: #0284c7; font-weight: bold; margin-bottom: 15px;">
+                    <i class="fa-solid fa-shield-halved"></i> Crie sua nova senha de acesso:
+                </p>
+                <input type="hidden" id="emailRedefinicao">
+                <div class="form-group">
+                    <label>Nova Senha:</label>
+                    <input type="password" id="novaSenhaInput" required minlength="6" placeholder="Mínimo 6 caracteres">
+                </div>
+                <div class="form-group">
+                    <label>Confirme a Nova Senha:</label>
+                    <input type="password" id="confirmarNovaSenhaInput" required minlength="6" placeholder="Digite a mesma senha">
+                </div>
+                <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-check-circle"></i> Salvar Nova Senha & Entrar</button>
             </form>
 
             <div id="msgLogin" class="feedback-msg"></div>
@@ -97,7 +114,7 @@
             <nav class="tabs-nav">
                 <button class="tab-btn active" onclick="alternarAba('operacoes')"><i class="fa-solid fa-handshake"></i> Triagem & Atendimento</button>
                 <button class="tab-btn" onclick="alternarAba('estoque')"><i class="fa-solid fa-boxes-stacked"></i> Estoque Geral</button>
-                <button class="tab-btn" onclick="alternarAba('cadastros')"><i class="fa-solid fa-folder-plus"></i> Cadastros Gerais</button> <!-- ABA UNIFICADA DE CADASTROS -->
+                <button class="tab-btn" onclick="alternarAba('cadastros')"><i class="fa-solid fa-folder-plus"></i> Cadastros Gerais</button>
                 <button class="tab-btn" onclick="alternarAba('espiritual')"><i class="fa-solid fa-hands-praying"></i> Assistência Espiritual</button>
                 <button class="tab-btn" onclick="alternarAba('historico')"><i class="fa-solid fa-receipt"></i> Histórico de Recibos</button>
                 <button class="tab-btn" onclick="alternarAba('relatorio')"><i class="fa-solid fa-chart-pie"></i> Relatório de Faltantes</button>
@@ -187,7 +204,7 @@
                 </section>
             </div>
 
-            <!-- ABA 3: CADASTROS GERAIS (MÓDULOS DE CADASTRO UNIFICADOS) -->
+            <!-- ABA 3: CADASTROS GERAIS -->
             <div id="aba-cadastros" class="tab-content">
                 <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
                 
@@ -258,9 +275,9 @@
 
                 </section>
 
-                <!-- LISTA DE USUÁRIOS CADASTRADOS ABAIXO DOS FORMULÁRIOS -->
+                <!-- TABELA DE USUÁRIOS CADASTRADOS (COM STATUS E AÇÃO) -->
                 <section class="panel full-width" style="margin-top: 20px;">
-                    <h2><i class="fa-solid fa-users-gear"></i> Usuários Ativos Cadastrados</h2>
+                    <h2><i class="fa-solid fa-users-gear"></i> Usuários do Sistema & Status</h2>
                     <div class="table-responsive">
                         <table class="data-table">
                             <thead>
@@ -268,10 +285,12 @@
                                     <th>Nome</th>
                                     <th>E-mail</th>
                                     <th>Cargo</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="tabelaUsuarios">
-                                <tr><td colspan="3" style="text-align:center; color:#888;">Carregando...</td></tr>
+                                <tr><td colspan="5" style="text-align:center; color:#888;">Carregando...</td></tr>
                             </tbody>
                         </table>
                     </div>

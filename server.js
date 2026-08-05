@@ -13,12 +13,9 @@ const DATA_FILE = path.join(__dirname, 'dados.json');
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Configuração do Nodemailer (Utilize dados SMTP do seu e-mail)
-// Para testes locais sem envio real, o Nodemailer apenas registrará a tentativa caso falhe.
+// Configuração do Nodemailer com autenticação SMTP do Gmail
 const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: process.env.SMTP_PORT || 587,
-    secure: false,
+    service: 'gmail',
     auth: {
         user: process.env.SMTP_USER || 'zapjai@gmail.com',
         pass: process.env.SMTP_PASS || 'iurt girk ccsx hryr'
@@ -217,8 +214,8 @@ class Roupa extends ItemEstoque {
 // ============================================================
 
 let bancoVoluntarios = [
-    { id: 1, nome: 'Jair Batista Gomes', email: 'jair@dorcas.org', senhaHash: bcrypt.hashSync('123456', 8), cargo: 'Administrador' },
-    { id: 2, nome: 'Karina Gomes', email: 'karina@dorcas.org', senhaHash: bcrypt.hashSync('123456', 8), cargo: 'Voluntário' }
+    { id: 1, nome: 'Jair Batista Gomes', email: 'jair@dorcas.org', senhaHash: bcrypt.hashSync('123456', 8), cargo: 'Administrador', ativo: true, requerTrocaSenha: false },
+    { id: 2, nome: 'Karina Gomes', email: 'karina@dorcas.org', senhaHash: bcrypt.hashSync('123456', 8), cargo: 'Voluntário', ativo: true, requerTrocaSenha: false }
 ];
 
 const estadoInicial = {
@@ -303,7 +300,15 @@ function carregarDadosDoDisco() {
         historicoAtendimentos = Array.isArray(dadosRaw.historico) ? dadosRaw.historico : [];
         historicoEspiritual = Array.isArray(dadosRaw.historicoEspiritual) ? dadosRaw.historicoEspiritual : [];
         if (Array.isArray(dadosRaw.usuarios) && dadosRaw.usuarios.length > 0) {
-            bancoVoluntarios = dadosRaw.usuarios;
+            bancoVoluntarios = dadosRaw.usuarios.map(u => ({
+                id: u.id,
+                nome: u.nome,
+                email: u.email,
+                senhaHash: u.senhaHash,
+                cargo: u.cargo,
+                ativo: u.ativo !== undefined ? u.ativo : true,
+                requerTrocaSenha: u.requerTrocaSenha || false
+            }));
         }
     } catch (err) {
         console.error('[DORCAS ERRO] Falha ao carregar dados:', err);
@@ -341,6 +346,19 @@ app.post('/api/login', (req, res) => {
         return res.status(401).json({ success: false, message: 'E-mail ou senha incorretos.' });
     }
 
+    if (voluntario.ativo === false) {
+        return res.status(403).json({ success: false, message: 'Usuário desativado. Entre em contato com o administrador.' });
+    }
+
+    if (voluntario.requerTrocaSenha) {
+        return res.json({
+            success: true,
+            requerTrocaSenha: true,
+            email: voluntario.email,
+            message: 'Senha temporária utilizada. Cadastre uma nova senha para continuar.'
+        });
+    }
+
     const token = jwt.sign(
         { id: voluntario.id, nome: voluntario.nome, email: voluntario.email, cargo: voluntario.cargo },
         SECRET_KEY,
@@ -349,10 +367,33 @@ app.post('/api/login', (req, res) => {
 
     res.json({
         success: true,
-        message: 'Login realizado com sucesso!',
+        requerTrocaSenha: false,
         token: token,
         usuario: { nome: voluntario.nome, email: voluntario.email, cargo: voluntario.cargo }
     });
+});
+
+app.post('/api/redefinir-senha-definitiva', (req, res) => {
+    const { email, novaSenha, confirmacaoSenha } = req.body;
+
+    if (!novaSenha || novaSenha !== confirmacaoSenha) {
+        return res.status(400).json({ success: false, message: 'As senhas informadas não conferem.' });
+    }
+
+    if (novaSenha.length < 6) {
+        return res.status(400).json({ success: false, message: 'A nova senha deve ter no mínimo 6 caracteres.' });
+    }
+
+    const voluntario = bancoVoluntarios.find(v => v.email.toLowerCase() === email.toLowerCase());
+    if (!voluntario) {
+        return res.status(404).json({ success: false, message: 'Usuário não encontrado.' });
+    }
+
+    voluntario.senhaHash = bcrypt.hashSync(novaSenha, 8);
+    voluntario.requerTrocaSenha = false;
+    salvarDadosEmDisco();
+
+    res.json({ success: true, message: 'Senha atualizada com sucesso! Faça login com a nova senha.' });
 });
 
 app.post('/api/esqueci-senha', async (req, res) => {
@@ -360,29 +401,77 @@ app.post('/api/esqueci-senha', async (req, res) => {
     const voluntario = bancoVoluntarios.find(v => v.email.toLowerCase() === email.toLowerCase());
 
     if (!voluntario) {
-        return res.status(440).json({ success: false, message: 'E-mail não encontrado no cadastro do sistema.' });
+        return res.status(404).json({ success: false, message: 'E-mail não encontrado no cadastro do sistema.' });
     }
 
-    const novaSenha = geradorSenhaAleatoria();
-    voluntario.senhaHash = bcrypt.hashSync(novaSenha, 8);
+    if (voluntario.ativo === false) {
+        return res.status(403).json({ success: false, message: 'Este usuário está desativado no sistema.' });
+    }
+
+    const senhaTemporaria = geradorSenhaAleatoria();
+    voluntario.senhaHash = bcrypt.hashSync(senhaTemporaria, 8);
+    voluntario.requerTrocaSenha = true;
     salvarDadosEmDisco();
 
     try {
         await transporter.sendMail({
-            from: '"Aplicativo Dorcas" <no-reply@dorcas.org>',
+            from: '"Aplicativo Dorcas" <zapjai@gmail.com>',
             to: voluntario.email,
-            subject: 'Redefinição de Senha - Aplicativo Dorcas',
-            text: `Olá ${voluntario.nome},\n\nSua senha de acesso ao Aplicativo Dorcas foi redefinida.\n\nSua nova senha é: ${novaSenha}\n\nRecomendamos que você acesse o sistema e mantenha essa informação segura.`
+            subject: 'Senha Temporária de Acesso - Aplicativo Dorcas',
+            text: `Olá ${voluntario.nome},\n\nVocê solicitou a redefinição de sua senha.\n\nSua senha temporária é: ${senhaTemporaria}\n\nAcesse o sistema utilizando esta senha temporária e você será solicitado a cadastrar uma nova senha definitiva.`
         });
-        res.json({ success: true, message: `Uma nova senha foi enviada para ${voluntario.email}!` });
+
+        res.json({ success: true, message: `Uma senha temporária foi enviada para ${voluntario.email}!` });
     } catch (err) {
-        console.log(`[DORCAS] Simulação de envio de e-mail (${voluntario.email}). Nova senha gerada: ${novaSenha}`);
-        res.json({ success: true, message: `Sua nova senha provisória é: ${novaSenha} (E-mail registrado no console)` });
+        console.error('[DORCAS SMTP ERRO] Falha ao enviar e-mail:', err.message);
+        console.log(`[DORCAS BACKUP] Senha temporária para ${voluntario.email}: ${senhaTemporaria}`);
+        res.status(500).json({ success: false, message: 'Erro ao enviar o e-mail. Verifique o servidor SMTP.' });
     }
 });
 
 app.get('/api/me', autenticarToken, (req, res) => {
     res.json({ success: true, usuario: req.usuario });
+});
+
+// ============================================================
+// ENDPOINTS DE GESTÃO DE FAMÍLIAS (INCLUINDO NOVO CADASTRO)
+// ============================================================
+
+app.get('/api/familias', autenticarToken, (req, res) => {
+    const busca = req.query.busca ? req.query.busca.toLowerCase().trim() : '';
+    let resultado = bancoFamilias;
+
+    if (busca) {
+        resultado = bancoFamilias.filter(f => f.nome.toLowerCase().includes(busca) || (f.documento && f.documento.includes(busca)));
+    }
+
+    res.json({ success: true, familias: resultado.map(f => f.getPerfilPublico()) });
+});
+
+app.post('/api/familias/novo', autenticarToken, (req, res) => {
+    try {
+        const { nome, documento, endereco, telefone } = req.body;
+
+        if (!nome || !documento || !endereco || !telefone) {
+            return res.status(400).json({ success: false, message: 'Preencha todos os campos obrigatórios da família.' });
+        }
+
+        const novaFamilia = new Familia(
+            bancoFamilias.length + 1,
+            nome,
+            documento,
+            endereco,
+            telefone,
+            true
+        );
+
+        bancoFamilias.push(novaFamilia);
+        salvarDadosEmDisco();
+
+        res.json({ success: true, message: `Família '${nome}' cadastrada com sucesso!`, familia: novaFamilia.getPerfilPublico() });
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
 });
 
 // ============================================================
@@ -394,7 +483,8 @@ app.get('/api/usuarios', autenticarToken, (req, res) => {
         id: v.id,
         nome: v.nome,
         email: v.email,
-        cargo: v.cargo
+        cargo: v.cargo,
+        ativo: v.ativo !== undefined ? v.ativo : true
     }));
     res.json({ success: true, usuarios: listaSanitizada });
 });
@@ -417,7 +507,9 @@ app.post('/api/usuarios/novo', autenticarToken, async (req, res) => {
         nome,
         email,
         senhaHash: bcrypt.hashSync(novaSenha, 8),
-        cargo
+        cargo,
+        ativo: true,
+        requerTrocaSenha: true
     };
 
     bancoVoluntarios.push(novoUsuario);
@@ -425,16 +517,36 @@ app.post('/api/usuarios/novo', autenticarToken, async (req, res) => {
 
     try {
         await transporter.sendMail({
-            from: '"Aplicativo Dorcas" <no-reply@dorcas.org>',
+            from: '"Aplicativo Dorcas" <zapjai@gmail.com>',
             to: email,
             subject: 'Bem-vindo ao Aplicativo Dorcas - Seus Dados de Acesso',
-            text: `Olá ${nome},\n\nVocê foi cadastrado como ${cargo} no Aplicativo Dorcas.\n\nSeus dados de acesso:\nE-mail: ${email}\nSenha Inicial: ${novaSenha}\n\nAcesse o sistema e bom trabalho!`
+            text: `Olá ${nome},\n\nVocê foi cadastrado como ${cargo} no Aplicativo Dorcas.\n\nSeus dados de acesso:\nE-mail: ${email}\nSenha Temporária: ${novaSenha}\n\nAcesse o sistema com esta senha temporária para cadastrar sua senha definitiva.`
         });
-        res.json({ success: true, message: `Usuário '${nome}' cadastrado! Senha enviada para o e-mail.` });
+
+        res.json({ success: true, message: `Usuário '${nome}' cadastrado com sucesso! A senha foi enviada para ${email}.` });
     } catch (err) {
-        console.log(`[DORCAS] Novo Usuário (${email}). Senha gerada: ${novaSenha}`);
-        res.json({ success: true, message: `Usuário cadastrado com sucesso! Senha provisória: ${novaSenha}` });
+        console.error('[DORCAS SMTP ERRO] Falha ao enviar e-mail:', err.message);
+        console.log(`[DORCAS BACKUP] Senha para ${email}: ${novaSenha}`);
+        res.json({ success: true, message: `Usuário cadastrado! (Aviso: Falha no envio SMTP. Verifique o console do servidor).` });
     }
+});
+
+app.post('/api/usuarios/toggle-status', autenticarToken, (req, res) => {
+    const { id } = req.body;
+    const voluntario = bancoVoluntarios.find(v => v.id === parseInt(id));
+
+    if (!voluntario) {
+        return res.status(404).json({ success: false, message: 'Usuário não encontrado.' });
+    }
+
+    voluntario.ativo = !voluntario.ativo;
+    salvarDadosEmDisco();
+
+    res.json({ 
+        success: true, 
+        message: `Usuário '${voluntario.nome}' ${voluntario.ativo ? 'ativado' : 'desativado'} com sucesso!`,
+        ativo: voluntario.ativo
+    });
 });
 
 // ============================================================
@@ -483,6 +595,38 @@ app.get('/api/estoque', autenticarToken, (req, res) => {
         cestasBasicasDisponiveis: cestasBasicasCompletas,
         estoque: estoqueFormatado
     });
+});
+
+app.post('/api/estoque/novo', autenticarToken, (req, res) => {
+    try {
+        const { categoria, descricao, quantidade, dataValidade, tamanho, genero } = req.body;
+        const qtd = parseInt(quantidade) || 1;
+
+        if (!descricao || !categoria) {
+            return res.status(400).json({ success: false, message: 'Categoria e Descrição são obrigatórias.' });
+        }
+
+        let novoItem;
+        const novoCodigo = bancoEstoque.length > 0 ? Math.max(...bancoEstoque.map(i => i.codigo)) + 1 : 101;
+
+        if (categoria === 'Alimento') {
+            novoItem = new Alimento(novoCodigo, descricao, qtd, dataValidade);
+        } else if (categoria === 'Higiene') {
+            novoItem = new CestaHigiene(novoCodigo, descricao, qtd);
+        } else if (categoria === 'Roupa') {
+            novoItem = new Roupa(novoCodigo, descricao, qtd, tamanho, genero);
+        }
+
+        if (novoItem) {
+            bancoEstoque.push(novoItem);
+            salvarDadosEmDisco();
+            res.json({ success: true, message: `Item '${descricao}' adicionado ao estoque!` });
+        } else {
+            res.status(400).json({ success: false, message: 'Categoria de estoque inválida.' });
+        }
+    } catch (err) {
+        res.status(400).json({ success: false, message: err.message });
+    }
 });
 
 app.get('/api/estoque/faltantes', autenticarToken, (req, res) => {
@@ -534,10 +678,6 @@ app.get('/api/estoque/faltantes', autenticarToken, (req, res) => {
     }
 
     res.json({ success: true, metaCestas, faltantes });
-});
-
-app.get('/api/familias', autenticarToken, (req, res) => {
-    res.json({ success: true, familias: bancoFamilias.map(f => f.getPerfilPublico()) });
 });
 
 app.get('/api/atendimentos/historico', autenticarToken, (req, res) => {

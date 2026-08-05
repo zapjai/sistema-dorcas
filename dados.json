@@ -287,28 +287,36 @@
       "nome": "Jair Batista Gomes",
       "email": "jair@dorcas.org",
       "senhaHash": "$2a$08$Ym63LG0l0/CzznlTrp6yyuLuJWdde3QhS6kKwqkSMbaF4V.pOBfhW",
-      "cargo": "Administrador"
+      "cargo": "Administrador",
+      "ativo": true,
+      "requerTrocaSenha": false
     },
     {
       "id": 2,
       "nome": "Karina Gomes",
       "email": "karina@dorcas.org",
       "senhaHash": "$2a$08$FtJk0jdRlLVnmAvp/yjXOO2E3rh8hBmZNlRkFCal5bkOfvIwi9tzO",
-      "cargo": "Voluntário"
+      "cargo": "Voluntário",
+      "ativo": true,
+      "requerTrocaSenha": false
     },
     {
       "id": 3,
       "nome": "Jair Gomes",
       "email": "zapjai@gmail.com",
-      "senhaHash": "$2a$08$4cXz.eA.yLhgCP6q9WAwYeetWlgH6mQUvlqgIHoMAw7oEXmqT0Oay",
-      "cargo": "Administrador"
+      "senhaHash": "$2a$08$evlkCdfOVYEt7SB9ilvHAOvfQLHCk.Z4BhHJSivfuJig7T2SBVZr6",
+      "cargo": "Administrador",
+      "ativo": true,
+      "requerTrocaSenha": false
     },
     {
       "id": 4,
       "nome": "Jair",
       "email": "jair@msgas.com.br",
       "senhaHash": "$2a$08$q9ogSzFnCW4RpvcJpig8W.ZmgSc9t2O6h6lVxhd5pZ6N73ohvHJ8G",
-      "cargo": "Administrador"
+      "cargo": "Administrador",
+      "ativo": true,
+      "requerTrocaSenha": false
     }
   ]
 }

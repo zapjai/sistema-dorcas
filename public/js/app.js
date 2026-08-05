@@ -32,19 +32,28 @@ async function verificarSessao() {
     } catch (err) { fazerLogout(); }
 }
 
-function alternarFormEsqueciSenha(exibirEsqueci) {
+// ============================================================
+// CONTROLE DE NAVEGAÇÃO NA TELA DE LOGIN
+// ============================================================
+
+function alternarTelasLogin(modo) {
     const formLogin = document.getElementById('formLogin');
     const formEsqueci = document.getElementById('formEsqueciSenha');
+    const formRedefinir = document.getElementById('formRedefinirNovaSenha');
     const msgDiv = document.getElementById('msgLogin');
     if (msgDiv) msgDiv.innerText = '';
 
-    if (exibirEsqueci) {
-        formLogin?.classList.add('hidden');
-        formEsqueci?.classList.remove('hidden');
-    } else {
-        formEsqueci?.classList.add('hidden');
-        formLogin?.classList.remove('hidden');
-    }
+    formLogin?.classList.add('hidden');
+    formEsqueci?.classList.add('hidden');
+    formRedefinir?.classList.add('hidden');
+
+    if (modo === 'esqueci') formEsqueci?.classList.remove('hidden');
+    else if (modo === 'redefinir') formRedefinir?.classList.remove('hidden');
+    else formLogin?.classList.remove('hidden');
+}
+
+function alternarFormEsqueciSenha(exibirEsqueci) {
+    alternarTelasLogin(exibirEsqueci ? 'esqueci' : 'login');
 }
 
 async function solicitarNovaSenha(event) {
@@ -78,11 +87,57 @@ async function realizarLogin(event) {
             body: JSON.stringify({ email, senha })
         });
         const data = await res.json();
+
         if (data.success) {
-            localStorage.setItem('dorcas_jwt_token', data.token);
-            verificarSessao();
-        } else { exibirMensagem(msgDiv, data.message, false); }
-    } catch (err) { exibirMensagem(msgDiv, "Erro de conexão com o servidor.", false); }
+            if (data.requerTrocaSenha) {
+                document.getElementById('emailRedefinicao').value = data.email;
+                alternarTelasLogin('redefinir');
+                exibirMensagem(msgDiv, data.message, true);
+            } else {
+                localStorage.setItem('dorcas_jwt_token', data.token);
+                verificarSessao();
+            }
+        } else {
+            exibirMensagem(msgDiv, data.message, false);
+        }
+    } catch (err) {
+        exibirMensagem(msgDiv, "Erro de conexão com o servidor.", false);
+    }
+}
+
+async function salvarNovaSenhaDefinitiva(event) {
+    if (event) event.preventDefault();
+    const email = document.getElementById('emailRedefinicao').value;
+    const novaSenha = document.getElementById('novaSenhaInput').value;
+    const confirmacaoSenha = document.getElementById('confirmarNovaSenhaInput').value;
+    const msgDiv = document.getElementById('msgLogin');
+
+    if (novaSenha !== confirmacaoSenha) {
+        exibirMensagem(msgDiv, "As senhas não conferem!", false);
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/redefinir-senha-definitiva', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, novaSenha, confirmacaoSenha })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            exibirMensagem(msgDiv, data.message, true);
+            setTimeout(() => {
+                alternarTelasLogin('login');
+                document.getElementById('loginEmail').value = email;
+                document.getElementById('loginSenha').value = '';
+            }, 2000);
+        } else {
+            exibirMensagem(msgDiv, data.message, false);
+        }
+    } catch (err) {
+        exibirMensagem(msgDiv, "Erro ao atualizar senha.", false);
+    }
 }
 
 function fazerLogout() {
@@ -115,11 +170,11 @@ function alternarAba(nomeAba) {
     else if (nomeAba === 'relatorio') carregarRelatorioFaltantes();
     else if (nomeAba === 'estoque' || nomeAba === 'operacoes') carregarEstoque();
     else if (nomeAba === 'espiritual') carregarAssistenciaEspiritual();
-    else if (nomeAba === 'cadastros') carregarUsuarios(); // CARREGA A LISTA DE USUÁRIOS NA ABA UNIFICADA
+    else if (nomeAba === 'cadastros') carregarUsuarios();
 }
 
 // ============================================================
-// GESTÃO DE USUÁRIOS
+// GESTÃO DE USUÁRIOS (COM STATUS ATIVO / DESATIVADO CORRIGIDO)
 // ============================================================
 
 async function carregarUsuarios() {
@@ -130,17 +185,50 @@ async function carregarUsuarios() {
         if (!tbody) return;
 
         if (data.success && data.usuarios && data.usuarios.length > 0) {
-            tbody.innerHTML = data.usuarios.map(u => `
-                <tr>
-                    <td><strong>${u.nome}</strong></td>
-                    <td>${u.email}</td>
-                    <td><span class="badge ${u.cargo === 'Administrador' ? 'badge-cat-alimento' : 'badge-cat-roupa'}">${u.cargo}</span></td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = data.usuarios.map(u => {
+                const isAtivo = u.ativo !== false;
+                const statusBadge = isAtivo 
+                    ? '<span class="badge badge-val-ok"><i class="fa-solid fa-circle-check"></i> Ativo</span>' 
+                    : '<span class="badge badge-val-vencido"><i class="fa-solid fa-circle-xmark"></i> Desativado</span>';
+                
+                const btnAcao = isAtivo 
+                    ? `<button type="button" class="btn" style="background:#e74c3c; color:#fff; padding:4px 10px; font-size:0.8rem; border-radius:4px; cursor:pointer;" onclick="alternarStatusUsuario(${u.id})"><i class="fa-solid fa-user-slash"></i> Desativar</button>`
+                    : `<button type="button" class="btn" style="background:#27ae60; color:#fff; padding:4px 10px; font-size:0.8rem; border-radius:4px; cursor:pointer;" onclick="alternarStatusUsuario(${u.id})"><i class="fa-solid fa-user-check"></i> Ativar</button>`;
+
+                return `
+                    <tr>
+                        <td><strong>${u.nome}</strong></td>
+                        <td>${u.email}</td>
+                        <td>${u.cargo}</td>
+                        <td>${statusBadge}</td>
+                        <td>${btnAcao}</td>
+                    </tr>
+                `;
+            }).join('');
         } else {
-            tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #888;">Nenhum usuário cadastrado.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888;">Nenhum usuário cadastrado.</td></tr>';
         }
     } catch (err) { console.error("Erro ao carregar usuários:", err); }
+}
+
+async function alternarStatusUsuario(id) {
+    if (!confirm("Deseja alterar o status de acesso deste usuário?")) return;
+
+    try {
+        const res = await fetch('/api/usuarios/toggle-status', {
+            method: 'POST',
+            headers: getHeadersAuth(),
+            body: JSON.stringify({ id: parseInt(id) })
+        });
+        const data = await res.json();
+        if (data.success) {
+            await carregarUsuarios(); // Força a atualização da tabela instantaneamente
+        } else {
+            alert(data.message);
+        }
+    } catch (err) {
+        alert("Erro ao alterar status do usuário.");
+    }
 }
 
 async function cadastrarUsuario(event) {
@@ -167,7 +255,7 @@ async function cadastrarUsuario(event) {
 }
 
 // ============================================================
-// OUTRAS FUNÇÕES DO SISTEMA
+// DEMAIS FUNÇÕES DO SISTEMA
 // ============================================================
 
 function alternarCamposCategoria() {
