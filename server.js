@@ -7,18 +7,33 @@ const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const SECRET_KEY = 'dorcas_chave_secreta_ufms_digital';
+const SECRET_KEY = 'dorcas_chave_secreta';
 const DATA_FILE = path.join(__dirname, 'dados.json');
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Configuração do Nodemailer com autenticação SMTP do Gmail
+// ============================================================
+// LEITURA DA CHAVE APENAS A PARTIR DO ARQUIVO key.inf
+// ============================================================
+
+let smtpPass = '';
+try {
+    const keyPath = path.join(__dirname, 'key.env');
+    if (fs.existsSync(keyPath)) {
+        smtpPass = fs.readFileSync(keyPath, 'utf8').trim();
+    } else {
+        console.warn('[DORCAS AVISO] Arquivo key.env não encontrado na raiz do projeto.');
+    }
+} catch (err) {
+    console.error('[DORCAS ERRO] Falha ao ler o arquivo key.env:', err.message);
+}
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: process.env.SMTP_USER || 'zapjai@gmail.com',
-        pass: process.env.SMTP_PASS || 'iurt girk ccsx hryr'
+        pass: smtpPass || process.env.SMTP_PASS
     }
 });
 
@@ -434,7 +449,7 @@ app.get('/api/me', autenticarToken, (req, res) => {
 });
 
 // ============================================================
-// ENDPOINTS DE GESTÃO DE FAMÍLIAS (INCLUINDO NOVO CADASTRO)
+// ENDPOINTS DE GESTÃO DE FAMÍLIAS
 // ============================================================
 
 app.get('/api/familias', autenticarToken, (req, res) => {
