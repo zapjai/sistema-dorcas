@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -9,139 +9,143 @@
 </head>
 <body>
 
+    <!-- Link para salto rápido (Leitores de Tela) -->
+    <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
+
     <!-- 1. TELA / MODAL DE LOGIN REFORMULADA -->
-    <div id="screenLogin" class="login-overlay">
+    <main id="screenLogin" class="login-overlay">
         <div class="login-card">
-            <div class="login-header">
-                <i class="fa-solid fa-hand-holding-heart login-logo"></i>
-                <h2>Aplicativo Dorcas</h2>
-                <p>Gestão Solidária & Triagem - ASA Amambaí</p>
-            </div>
+            <header class="login-header">
+                <i class="fa-solid fa-hand-holding-heart login-logo" aria-hidden="true"></i>
+                <h2>Dorcas</h2>
+                <p>Gestão Solidária & Triagem - IASD Bairro Amambaí</p>
+            </header>
             
             <!-- FORMULÁRIO 1: LOGIN PRINCIPAL -->
-            <form id="formLogin" onsubmit="realizarLogin(event)">
+            <form id="formLogin" onsubmit="realizarLogin(event)" aria-label="Formulário de Login">
                 <div class="form-group">
-                    <label><i class="fa-solid fa-envelope"></i> E-mail de Acesso:</label>
-                    <input type="email" id="loginEmail" required placeholder="Ex: jair@dorcas.org" value="jair@dorcas.org">
+                    <label for="loginEmail"><i class="fa-solid fa-envelope" aria-hidden="true"></i> E-mail de Acesso:</label>
+                    <input type="email" id="loginEmail" required placeholder="Ex: jair@dorcas.org" value="jair@dorcas.org" autocomplete="email">
                 </div>
                 <div class="form-group">
-                    <label><i class="fa-solid fa-key"></i> Senha:</label>
-                    <input type="password" id="loginSenha" required placeholder="Digite sua senha" value="123456">
+                    <label for="loginSenha"><i class="fa-solid fa-key" aria-hidden="true"></i> Senha:</label>
+                    <input type="password" id="loginSenha" required placeholder="Digite sua senha" value="123456" autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-right-to-bracket"></i> Entrar no Sistema</button>
+                <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Entrar no Sistema</button>
                 
                 <div style="text-align: center; margin-top: 15px;">
-                    <a href="#" onclick="alternarTelasLogin('esqueci')" style="color: #0284c7; text-decoration: none; font-size: 0.9rem;">
-                        <i class="fa-solid fa-unlock-keyhole"></i> Esqueci minha senha
-                    </a>
+                    <button type="button" class="btn-link" onclick="alternarTelasLogin('esqueci')">
+                        <i class="fa-solid fa-unlock-keyhole" aria-hidden="true"></i> Esqueci minha senha
+                    </button>
                 </div>
             </form>
 
             <!-- FORMULÁRIO 2: ESQUECI MINHA SENHA -->
-            <form id="formEsqueciSenha" class="hidden" onsubmit="solicitarNovaSenha(event)">
+            <form id="formEsqueciSenha" class="hidden" onsubmit="solicitarNovaSenha(event)" aria-label="Recuperação de Senha">
                 <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">Informe seu e-mail cadastrado. Uma senha temporária será enviada para você.</p>
                 <div class="form-group">
-                    <label><i class="fa-solid fa-envelope"></i> E-mail Cadastrado:</label>
-                    <input type="email" id="esqueciEmail" required placeholder="Seu e-mail cadastrado">
+                    <label for="esqueciEmail"><i class="fa-solid fa-envelope" aria-hidden="true"></i> E-mail Cadastrado:</label>
+                    <input type="email" id="esqueciEmail" required placeholder="Seu e-mail cadastrado" autocomplete="email">
                 </div>
-                <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-paper-plane"></i> Enviar Senha Temporária</button>
+                <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Enviar Senha Temporária</button>
                 
                 <div style="text-align: center; margin-top: 15px;">
-                    <a href="#" onclick="alternarTelasLogin('login')" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">
-                        <i class="fa-solid fa-arrow-left"></i> Voltar ao Login
-                    </a>
+                    <button type="button" class="btn-link btn-link-secondary" onclick="alternarTelasLogin('login')">
+                        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Voltar ao Login
+                    </button>
                 </div>
             </form>
 
-            <!-- FORMULÁRIO 3: REDEFINIÇÃO OBRIGATÓRIA (APARECE APÓS USAR A SENHA TEMPORÁRIA) -->
-            <form id="formRedefinirNovaSenha" class="hidden" onsubmit="salvarNovaSenhaDefinitiva(event)">
+            <!-- FORMULÁRIO 3: REDEFINIÇÃO OBRIGATÓRIA -->
+            <form id="formRedefinirNovaSenha" class="hidden" onsubmit="salvarNovaSenhaDefinitiva(event)" aria-label="Redefinição de Senha">
                 <p style="font-size: 0.85rem; color: #0284c7; font-weight: bold; margin-bottom: 15px;">
-                    <i class="fa-solid fa-shield-halved"></i> Crie sua nova senha de acesso:
+                    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Crie sua nova senha de acesso:
                 </p>
                 <input type="hidden" id="emailRedefinicao">
                 <div class="form-group">
-                    <label>Nova Senha:</label>
-                    <input type="password" id="novaSenhaInput" required minlength="6" placeholder="Mínimo 6 caracteres">
+                    <label for="novaSenhaInput">Nova Senha:</label>
+                    <input type="password" id="novaSenhaInput" required minlength="6" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
                 </div>
                 <div class="form-group">
-                    <label>Confirme a Nova Senha:</label>
-                    <input type="password" id="confirmarNovaSenhaInput" required minlength="6" placeholder="Digite a mesma senha">
+                    <label for="confirmarNovaSenhaInput">Confirme a Nova Senha:</label>
+                    <input type="password" id="confirmarNovaSenhaInput" required minlength="6" placeholder="Digite a mesma senha" autocomplete="new-password">
                 </div>
-                <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-check-circle"></i> Salvar Nova Senha & Entrar</button>
+                <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Salvar Nova Senha & Entrar</button>
             </form>
 
-            <div id="msgLogin" class="feedback-msg"></div>
+            <div id="msgLogin" class="feedback-msg" aria-live="polite"></div>
         </div>
-    </div>
+    </main>
 
     <!-- 2. PAINEL PRINCIPAL DO SISTEMA -->
     <div id="screenApp" class="hidden">
-        <header class="navbar">
+        <header class="navbar" role="banner">
             <div class="container nav-container">
                 <div class="brand">
-                    <i class="fa-solid fa-hand-holding-heart logo-icon"></i>
+                    <i class="fa-solid fa-hand-holding-heart logo-icon" aria-hidden="true"></i>
                     <div>
-                        <h1>Aplicativo Dorcas</h1>
-                        <span class="subtitle">Gestão Solidária & Triagem - ASA Amambaí</span>
+                        <h1>Dorcas</h1>
+                        <span class="subtitle">Gestão Solidária & Triagem - IASD Bairro Amambaí</span>
                     </div>
                 </div>
                 <div class="user-badge">
-                    <i class="fa-solid fa-user-check"></i> <span id="labelNomeUsuario">Voluntário Logado</span>
-                    <button class="btn-logout" onclick="fazerLogout()" title="Sair do Sistema"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    <i class="fa-solid fa-user-check" aria-hidden="true"></i> <span id="labelNomeUsuario">Voluntário Logado</span>
+                    <button class="btn-logout" onclick="fazerLogout()" title="Sair do Sistema" aria-label="Sair do Sistema"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i></button>
                 </div>
             </div>
         </header>
 
-        <main class="container main-content">
-            <section class="dashboard-grid">
-                <div class="card card-blue">
-                    <div class="card-icon"><i class="fa-solid fa-users"></i></div>
+        <main class="container main-content" id="main-content">
+            <section class="dashboard-grid" aria-label="Resumo de Métricas">
+                <article class="card card-blue">
+                    <div class="card-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></div>
                     <div>
-                        <h3>Famílias Assistidas</h3>
+                        <h2>Famílias Assistidas</h2>
                         <p class="metric" id="totalFamilias">0 Cadastradas</p>
                     </div>
-                </div>
-                <div class="card card-green">
-                    <div class="card-icon"><i class="fa-solid fa-basket-shopping"></i></div>
+                </article>
+                <article class="card card-green">
+                    <div class="card-icon"><i class="fa-solid fa-basket-shopping" aria-hidden="true"></i></div>
                     <div>
-                        <h3>Cestas Básicas Completas</h3>
+                        <h2>Cestas Básicas Completas</h2>
                         <p class="metric" id="totalCestasBasicas">0 Cestas</p>
                     </div>
-                </div>
+                </article>
             </section>
 
             <!-- Menu de Navegação por Abas Unificado -->
-            <nav class="tabs-nav">
-                <button class="tab-btn active" onclick="alternarAba('operacoes')"><i class="fa-solid fa-handshake"></i> Triagem & Atendimento</button>
-                <button class="tab-btn" onclick="alternarAba('estoque')"><i class="fa-solid fa-boxes-stacked"></i> Estoque Geral</button>
-                <button class="tab-btn" onclick="alternarAba('cadastros')"><i class="fa-solid fa-folder-plus"></i> Cadastros Gerais</button>
-                <button class="tab-btn" onclick="alternarAba('espiritual')"><i class="fa-solid fa-hands-praying"></i> Assistência Espiritual</button>
-                <button class="tab-btn" onclick="alternarAba('historico')"><i class="fa-solid fa-receipt"></i> Histórico de Recibos</button>
-                <button class="tab-btn" onclick="alternarAba('relatorio')"><i class="fa-solid fa-chart-pie"></i> Relatório de Faltantes</button>
+            <nav class="tabs-nav" role="tablist" aria-label="Navegação do Painel">
+                <button class="tab-btn active" id="tab-operacoes" role="tab" aria-selected="true" aria-controls="aba-operacoes" onclick="alternarAba('operacoes')"><i class="fa-solid fa-handshake" aria-hidden="true"></i> Triagem & Atendimento</button>
+                <button class="tab-btn" id="tab-estoque" role="tab" aria-selected="false" aria-controls="aba-estoque" onclick="alternarAba('estoque')"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i> Estoque Geral</button>
+                <button class="tab-btn" id="tab-cadastros" role="tab" aria-selected="false" aria-controls="aba-cadastros" onclick="alternarAba('cadastros')"><i class="fa-solid fa-folder-plus" aria-hidden="true"></i> Cadastros Gerais</button>
+                <button class="tab-btn" id="tab-espiritual" role="tab" aria-selected="false" aria-controls="aba-espiritual" onclick="alternarAba('espiritual')"><i class="fa-solid fa-hands-praying" aria-hidden="true"></i> Assistência Espiritual</button>
+                <button class="tab-btn" id="tab-historico" role="tab" aria-selected="false" aria-controls="aba-historico" onclick="alternarAba('historico')"><i class="fa-solid fa-receipt" aria-hidden="true"></i> Histórico de Recibos</button>
+                <button class="tab-btn" id="tab-relatorio" role="tab" aria-selected="false" aria-controls="aba-relatorio" onclick="alternarAba('relatorio')"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> Relatório de Faltantes</button>
             </nav>
 
             <!-- ABA 1: TRIAGEM & ATENDIMENTO -->
-            <div id="aba-operacoes" class="tab-content active">
-                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
-                <section class="operations-container">
+            <section id="aba-operacoes" class="tab-content active" role="tabpanel" aria-labelledby="tab-operacoes">
+                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf" aria-hidden="true"></i> Imprimir Relatório (PDF)</button>
+                <div class="operations-container">
                     <div class="panel">
-                        <h2><i class="fa-solid fa-magnifying-glass"></i> Consultar Assistido</h2>
+                        <h2><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Consultar Assistido</h2>
                         <div class="search-box">
+                            <label for="inputBusca" class="sr-only">Buscar família assistida</label>
                             <input type="text" id="inputBusca" placeholder="Digite o nome..." onkeyup="buscarFamilias()">
-                            <button class="btn btn-primary" onclick="buscarFamilias()"><i class="fa-solid fa-search"></i> Buscar</button>
+                            <button type="button" class="btn btn-primary" onclick="buscarFamilias()"><i class="fa-solid fa-search" aria-hidden="true"></i> Buscar</button>
                         </div>
-                        <div id="listaFamilias" class="familias-list"></div>
+                        <div id="listaFamilias" class="familias-list" role="region" aria-live="polite"></div>
                     </div>
 
                     <div class="panel">
-                        <h2><i class="fa-solid fa-box-open"></i> Registrar Baixa de Doação</h2>
+                        <h2><i class="fa-solid fa-box-open" aria-hidden="true"></i> Registrar Baixa de Doação</h2>
                         <form id="formBaixa" onsubmit="registrarBaixa(event)">
                             <div class="form-group">
-                                <label>Família Beneficiária:</label>
+                                <label for="selectFamilia">Família Beneficiária:</label>
                                 <select id="selectFamilia" required><option value="">-- Selecione uma família --</option></select>
                             </div>
                             <div class="form-group">
-                                <label>Tipo de Entrega / Doação:</label>
+                                <label for="selectTipoEntrega">Tipo de Entrega / Doação:</label>
                                 <select id="selectTipoEntrega" onchange="alternarTipoEntrega()" required>
                                     <option value="CESTA_BASICA">Cesta Básica Completa (Alimentos + Higiene)</option>
                                     <option value="CARRINHO_ROUPAS">Carrinho de Roupas / Vestuário</option>
@@ -150,143 +154,148 @@
                             </div>
                             
                             <div id="campoItemAvulso" class="form-group hidden">
-                                <label>Item do Estoque:</label>
+                                <label for="selectItemAvulso">Item do Estoque:</label>
                                 <select id="selectItemAvulso"><option value="">-- Selecione o item --</option></select>
-                                <label style="margin-top:10px;">Quantidade Entregue:</label>
+                                <label for="inputQuantidade" style="margin-top:10px;">Quantidade Entregue:</label>
                                 <input type="number" id="inputQuantidade" min="1" value="1">
                             </div>
 
                             <div id="painelCarrinhoRoupas" class="form-group hidden" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 15px;">
-                                <h3 style="font-size: 0.95rem; color: var(--primary-color); margin-bottom: 10px;"><i class="fa-solid fa-shirt"></i> Selecionar Peças de Roupa</h3>
-                                <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                                <h3 style="font-size: 0.95rem; color: var(--primary-color); margin-bottom: 10px;"><i class="fa-solid fa-shirt" aria-hidden="true"></i> Selecionar Peças de Roupa</h3>
+                                <div class="carrinho-inputs">
+                                    <label for="selectRoupaEstoque" class="sr-only">Selecione a peça</label>
                                     <select id="selectRoupaEstoque" style="flex: 2;"><option value="">-- Selecione a peça --</option></select>
+                                    <label for="qtdRoupaItem" class="sr-only">Quantidade</label>
                                     <input type="number" id="qtdRoupaItem" min="1" value="1" placeholder="Qtd" style="flex: 1;">
-                                    <button type="button" class="btn btn-primary" onclick="adicionarAoCarrinho()"><i class="fa-solid fa-plus"></i> Add</button>
+                                    <button type="button" class="btn btn-primary" onclick="adicionarAoCarrinho()"><i class="fa-solid fa-plus" aria-hidden="true"></i> Add</button>
                                 </div>
 
                                 <div class="table-responsive">
                                     <table class="data-table" style="font-size: 0.85rem; background: #fff;">
+                                        <caption>Carrinho de Roupas Selecionadas</caption>
                                         <thead>
-                                            <tr><th>Peça / Tamanho</th><th>Qtd</th><th>Ação</th></tr>
+                                            <tr><th scope="col">Peça / Tamanho</th><th scope="col">Qtd</th><th scope="col">Ação</th></tr>
                                         </thead>
                                         <tbody id="tabelaCarrinho"><tr><td colspan="3" style="text-align:center; color:#888;">Carrinho vazio</td></tr></tbody>
                                     </table>
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-check-circle"></i> Confirmar Baixa / Emissão de Recibo</button>
+                            <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-check-circle" aria-hidden="true"></i> Confirmar Baixa / Emissão de Recibo</button>
                         </form>
-                        <div id="mensagemFeedback" class="feedback-msg"></div>
+                        <div id="mensagemFeedback" class="feedback-msg" aria-live="polite"></div>
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
 
             <!-- ABA 2: ESTOQUE GERAL -->
-            <div id="aba-estoque" class="tab-content">
-                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
-                <section class="panel full-width">
-                    <h2><i class="fa-solid fa-list-check"></i> Estoque Atual de Itens Individuais (Composição)</h2>
+            <section id="aba-estoque" class="tab-content" role="tabpanel" aria-labelledby="tab-estoque">
+                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf" aria-hidden="true"></i> Imprimir Relatório (PDF)</button>
+                <div class="panel full-width">
+                    <h2><i class="fa-solid fa-list-check" aria-hidden="true"></i> Estoque Atual de Itens Individuais (Composição)</h2>
                     <div class="table-responsive">
                         <table class="data-table">
+                            <caption>Listagem detalhada do estoque geral</caption>
                             <thead>
                                 <tr>
-                                    <th>Código</th>
-                                    <th>Categoria</th>
-                                    <th>Descrição / Produto</th>
-                                    <th>Detalhes / Tamanho</th>
-                                    <th>Validade</th>
-                                    <th>Quantidade em Estoque</th>
+                                    <th scope="col">Código</th>
+                                    <th scope="col">Categoria</th>
+                                    <th scope="col">Descrição / Produto</th>
+                                    <th scope="col">Detalhes / Tamanho</th>
+                                    <th scope="col">Validade</th>
+                                    <th scope="col">Quantidade em Estoque</th>
                                 </tr>
                             </thead>
                             <tbody id="tabelaEstoque"></tbody>
                         </table>
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
 
             <!-- ABA 3: CADASTROS GERAIS -->
-            <div id="aba-cadastros" class="tab-content">
-                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
+            <section id="aba-cadastros" class="tab-content" role="tabpanel" aria-labelledby="tab-cadastros">
+                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf" aria-hidden="true"></i> Imprimir Relatório (PDF)</button>
                 
-                <section class="operations-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+                <div class="operations-container">
                     
                     <!-- 1. CADASTRO DE FAMÍLIA ASSISTIDA -->
                     <div class="panel">
-                        <h2><i class="fa-solid fa-user-plus"></i> Cadastrar Família Assistida</h2>
+                        <h2><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Cadastrar Família Assistida</h2>
                         <form id="formCadFamilia" onsubmit="cadastrarFamilia(event)">
-                            <div class="form-group"><label>Nome do Responsável:</label><input type="text" id="cadNome" required placeholder="Ex: Maria da Silva"></div>
-                            <div class="form-group"><label>Documento de Identificação (CPF/RG):</label><input type="text" id="cadDoc" required placeholder="Ex: 123.456.789-00"></div>
-                            <div class="form-group"><label>Endereço Residencial:</label><input type="text" id="cadEndereco" required placeholder="Ex: Rua A, 123"></div>
-                            <div class="form-group"><label>Telefone de Contato:</label><input type="text" id="cadTelefone" required placeholder="Ex: (67) 99999-0000"></div>
-                            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-save"></i> Salvar Família</button>
+                            <div class="form-group"><label for="cadNome">Nome do Responsável:</label><input type="text" id="cadNome" required placeholder="Ex: Maria da Silva"></div>
+                            <div class="form-group"><label for="cadDoc">Documento de Identificação (CPF/RG):</label><input type="text" id="cadDoc" required placeholder="Ex: 123.456.789-00"></div>
+                            <div class="form-group"><label for="cadEndereco">Endereço Residencial:</label><input type="text" id="cadEndereco" required placeholder="Ex: Rua A, 123"></div>
+                            <div class="form-group"><label for="cadTelefone">Telefone de Contato:</label><input type="text" id="cadTelefone" required placeholder="Ex: (67) 99999-0000"></div>
+                            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-save" aria-hidden="true"></i> Salvar Família</button>
                         </form>
-                        <div id="msgCadFamilia" class="feedback-msg"></div>
+                        <div id="msgCadFamilia" class="feedback-msg" aria-live="polite"></div>
                     </div>
 
                     <!-- 2. CADASTRO DE ITEM NO ESTOQUE (TRIAGEM) -->
                     <div class="panel">
-                        <h2><i class="fa-solid fa-truck-ramp-box"></i> Nova Entrada no Estoque</h2>
+                        <h2><i class="fa-solid fa-truck-ramp-box" aria-hidden="true"></i> Nova Entrada no Estoque</h2>
                         <form id="formCadEstoque" onsubmit="cadastrarEstoque(event)">
                             <div class="form-group">
-                                <label>Categoria do Item:</label>
+                                <label for="cadCategoria">Categoria do Item:</label>
                                 <select id="cadCategoria" onchange="alternarCamposCategoria()" required>
                                     <option value="Alimento">Alimento (Cesta Básica)</option>
                                     <option value="Higiene">Higiene Pessoal</option>
                                     <option value="Roupa">Roupa / Vestuário</option>
                                 </select>
                             </div>
-                            <div class="form-group"><label>Descrição / Produto:</label><input type="text" id="cadDescricao" required placeholder="Ex: Feijão 1kg, Sabonete, etc."></div>
-                            <div class="form-group"><label>Quantidade Recebida:</label><input type="number" id="cadQtd" min="1" value="1" required></div>
-                            <div id="campoValidade" class="form-group"><label>Data de Validade:</label><input type="date" id="cadValidade"></div>
+                            <div class="form-group"><label for="cadDescricao">Descrição / Produto:</label><input type="text" id="cadDescricao" required placeholder="Ex: Feijão 1kg, Sabonete, etc."></div>
+                            <div class="form-group"><label for="cadQtd">Quantidade Recebida:</label><input type="number" id="cadQtd" min="1" value="1" required></div>
+                            <div id="campoValidade" class="form-group"><label for="cadValidade">Data de Validade:</label><input type="date" id="cadValidade"></div>
                             <div id="camposRoupa" class="form-group hidden">
-                                <label>Tamanho:</label>
+                                <label for="cadTamanho">Tamanho:</label>
                                 <select id="cadTamanho"><option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option><option value="Infantil">Infantil</option></select>
-                                <label style="margin-top:10px;">Gênero:</label>
+                                <label for="cadGenero" style="margin-top:10px;">Gênero:</label>
                                 <select id="cadGenero"><option value="Unissex">Unissex</option><option value="Masculino">Masculino</option><option value="Feminino">Feminino</option><option value="Infantil">Infantil</option></select>
                             </div>
-                            <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-plus-circle"></i> Adicionar ao Estoque</button>
+                            <button type="submit" class="btn btn-success btn-block"><i class="fa-solid fa-plus-circle" aria-hidden="true"></i> Adicionar ao Estoque</button>
                         </form>
-                        <div id="msgCadEstoque" class="feedback-msg"></div>
+                        <div id="msgCadEstoque" class="feedback-msg" aria-live="polite"></div>
                     </div>
 
                     <!-- 3. CADASTRO DE USUÁRIOS DO SISTEMA -->
                     <div class="panel">
-                        <h2><i class="fa-solid fa-user-gear"></i> Cadastrar Usuário do Sistema</h2>
+                        <h2><i class="fa-solid fa-user-gear" aria-hidden="true"></i> Cadastrar Usuário do Sistema</h2>
                         <form id="formNovoUsuario" onsubmit="cadastrarUsuario(event)">
                             <div class="form-group">
-                                <label>Nome do Voluntário / Usuário:</label>
+                                <label for="usrNome">Nome do Voluntário / Usuário:</label>
                                 <input type="text" id="usrNome" required placeholder="Ex: Maria Eduarda">
                             </div>
                             <div class="form-group">
-                                <label>E-mail Válido de Acesso:</label>
-                                <input type="email" id="usrEmail" required placeholder="Ex: maria@dorcas.org">
+                                <label for="usrEmail">E-mail Válido de Acesso:</label>
+                                <input type="email" id="usrEmail" required placeholder="Ex: maria@dorcas.org" autocomplete="email">
                             </div>
                             <div class="form-group">
-                                <label>Perfil de Acesso / Cargo:</label>
+                                <label for="usrCargo">Perfil de Acesso / Cargo:</label>
                                 <select id="usrCargo" required>
                                     <option value="Voluntário">Voluntário</option>
                                     <option value="Administrador">Administrador</option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-paper-plane"></i> Cadastrar Usuário</button>
+                            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Cadastrar Usuário</button>
                         </form>
-                        <div id="msgCadUsuario" class="feedback-msg"></div>
+                        <div id="msgCadUsuario" class="feedback-msg" aria-live="polite"></div>
                     </div>
 
-                </section>
+                </div>
 
-                <!-- TABELA DE USUÁRIOS CADASTRADOS (COM STATUS E AÇÃO) -->
-                <section class="panel full-width" style="margin-top: 20px;">
-                    <h2><i class="fa-solid fa-users-gear"></i> Usuários do Sistema & Status</h2>
+                <!-- TABELA DE USUÁRIOS CADASTRADOS -->
+                <div class="panel full-width" style="margin-top: 20px;">
+                    <h2><i class="fa-solid fa-users-gear" aria-hidden="true"></i> Usuários do Sistema & Status</h2>
                     <div class="table-responsive">
                         <table class="data-table">
+                            <caption>Lista de usuários e gerenciamento de acessos</caption>
                             <thead>
                                 <tr>
-                                    <th>Nome</th>
-                                    <th>E-mail</th>
-                                    <th>Cargo</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">E-mail</th>
+                                    <th scope="col">Cargo</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="tabelaUsuarios">
@@ -294,45 +303,46 @@
                             </tbody>
                         </table>
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
 
             <!-- ABA 4: ASSISTÊNCIA ESPIRITUAL -->
-            <div id="aba-espiritual" class="tab-content">
-                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
-                <section class="operations-container">
+            <section id="aba-espiritual" class="tab-content" role="tabpanel" aria-labelledby="tab-espiritual">
+                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf" aria-hidden="true"></i> Imprimir Relatório (PDF)</button>
+                <div class="operations-container">
                     <div class="panel">
-                        <h2><i class="fa-solid fa-cross"></i> Registrar Atendimento Espiritual</h2>
+                        <h2><i class="fa-solid fa-cross" aria-hidden="true"></i> Registrar Atendimento Espiritual</h2>
                         <form id="formAssistenciaEspiritual" onsubmit="registrarAssistenciaEspiritual(event)">
                             <div class="form-group">
-                                <label>Família Beneficiária:</label>
+                                <label for="selectFamiliaEspiritual">Família Beneficiária:</label>
                                 <select id="selectFamiliaEspiritual" required>
                                     <option value="">-- Selecione uma família --</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>Voluntário / Responsável pela Assistência:</label>
+                                <label for="inputAtendenteEspiritual">Voluntário / Responsável pela Assistência:</label>
                                 <input type="text" id="inputAtendenteEspiritual" placeholder="Ex: Voluntário João" required>
                             </div>
                             <div class="form-group">
-                                <label>Tipo e Descrição da Assistência:</label>
+                                <label for="inputTipoEspiritual">Tipo e Descrição da Assistência:</label>
                                 <textarea id="inputTipoEspiritual" rows="3" placeholder="Ex: Oração no lar, Estudo Bíblico, Aconselhamento, Visita Pastoral..." required style="width:100%; padding:8px; border-radius:4px; border:1px solid #ccc;"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-save"></i> Salvar Atendimento Espiritual</button>
+                            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-save" aria-hidden="true"></i> Salvar Atendimento Espiritual</button>
                         </form>
-                        <div id="msgEspiritual" class="feedback-msg"></div>
+                        <div id="msgEspiritual" class="feedback-msg" aria-live="polite"></div>
                     </div>
 
                     <div class="panel">
-                        <h2><i class="fa-solid fa-list"></i> Histórico de Acompanhamento Espiritual</h2>
+                        <h2><i class="fa-solid fa-list" aria-hidden="true"></i> Histórico de Acompanhamento Espiritual</h2>
                         <div class="table-responsive">
                             <table class="data-table">
+                                <caption>Histórico das assistências espirituais prestadas</caption>
                                 <thead>
                                     <tr>
-                                        <th>Data / Hora</th>
-                                        <th>Família</th>
-                                        <th>Assistido Por</th>
-                                        <th>Descrição / Atendimento</th>
+                                        <th scope="col">Data / Hora</th>
+                                        <th scope="col">Família</th>
+                                        <th scope="col">Assistido Por</th>
+                                        <th scope="col">Descrição / Atendimento</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabelaEspiritual">
@@ -341,34 +351,40 @@
                             </table>
                         </div>
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
 
             <!-- ABA 5: HISTÓRICO DE RECIBOS -->
-            <div id="aba-historico" class="tab-content">
-                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
-                <section class="panel full-width">
-                    <h2><i class="fa-solid fa-history"></i> Histórico de Entregas & Recibos Emitidos</h2>
+            <section id="aba-historico" class="tab-content" role="tabpanel" aria-labelledby="tab-historico">
+                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf" aria-hidden="true"></i> Imprimir Relatório (PDF)</button>
+                <div class="panel full-width">
+                    <h2><i class="fa-solid fa-history" aria-hidden="true"></i> Histórico de Entregas & Recibos Emitidos</h2>
                     <div class="table-responsive">
                         <table class="data-table">
+                            <caption>Registro completo de recibos de entregas</caption>
                             <thead>
-                                <tr><th>Recibo N°</th><th>Data / Hora</th><th>Família Beneficiária</th><th>Descrição da Doação Entregue</th></tr>
+                                <tr>
+                                    <th scope="col">Recibo N°</th>
+                                    <th scope="col">Data / Hora</th>
+                                    <th scope="col">Família Beneficiária</th>
+                                    <th scope="col">Descrição da Doação Entregue</th>
+                                </tr>
                             </thead>
                             <tbody id="tabelaHistorico"></tbody>
                         </table>
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
 
             <!-- ABA 6: RELATÓRIO DE FALTANTES -->
-            <div id="aba-relatorio" class="tab-content">
-                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf"></i> Imprimir Relatório (PDF)</button>
-                <section class="panel full-width">
-                    <h2><i class="fa-solid fa-chart-pie"></i> Déficit para Montagem da Cesta Básica Completa</h2>
+            <section id="aba-relatorio" class="tab-content" role="tabpanel" aria-labelledby="tab-relatorio">
+                <button class="btn-print" onclick="imprimirRelatorioAba()"><i class="fa-solid fa-file-pdf" aria-hidden="true"></i> Imprimir Relatório (PDF)</button>
+                <div class="panel full-width">
+                    <h2><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> Déficit para Montagem da Cesta Básica Completa</h2>
                     
                     <div id="cardMetaCestas" style="background: #e0f2fe; border-left: 5px solid #0284c7; padding: 15px; margin-bottom: 20px; border-radius: 6px;">
                         <h3 style="margin: 0; color: #0369a1; font-size: 1.1rem;">
-                            <i class="fa-solid fa-bullseye"></i> Meta para Equiparar o Estoque: <span id="labelMetaCestas" style="font-weight: bold; text-decoration: underline;">0 Cestas</span>
+                            <i class="fa-solid fa-bullseye" aria-hidden="true"></i> Meta para Equiparar o Estoque: <span id="labelMetaCestas" style="font-weight: bold; text-decoration: underline;">0 Cestas</span>
                         </h3>
                         <p style="margin: 5px 0 0 0; color: #334155; font-size: 0.9rem;">
                             Completando os itens abaixo, será possível formar exatamente o quantitativo de cestas indicado acima.
@@ -377,18 +393,19 @@
 
                     <div class="table-responsive">
                         <table class="data-table">
+                            <caption>Relatório comparativo de itens faltantes no estoque</caption>
                             <thead>
                                 <tr>
-                                    <th>Item Necessário</th>
-                                    <th>Em Estoque</th>
-                                    <th>Faltante (Déficit)</th>
+                                    <th scope="col">Item Necessário</th>
+                                    <th scope="col">Em Estoque</th>
+                                    <th scope="col">Faltante (Déficit)</th>
                                 </tr>
                             </thead>
                             <tbody id="tabelaFaltantesUnificado"></tbody>
                         </table>
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
         </main>
     </div>
 

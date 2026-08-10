@@ -7,14 +7,17 @@ const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const SECRET_KEY = 'dorcas_chave_secreta';
+// ============================================================
+// SEGURANÇA: Chave JWT lida prioritariamente das variáveis de ambiente
+// ============================================================
+const SECRET_KEY = process.env.SECRET_KEY || 'dorcas_chave_secreta_dev';
 const DATA_FILE = path.join(__dirname, 'dados.json');
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ============================================================
-// LEITURA DA CHAVE APENAS A PARTIR DO ARQUIVO key.inf
+// LEITURA DA CHAVE APENAS A PARTIR DO ARQUIVO key.env
 // ============================================================
 
 let smtpPass = '';

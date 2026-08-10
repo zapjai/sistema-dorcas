@@ -313,7 +313,7 @@
       "id": 4,
       "nome": "Jair",
       "email": "jair@msgas.com.br",
-      "senhaHash": "$2a$08$q9ogSzFnCW4RpvcJpig8W.ZmgSc9t2O6h6lVxhd5pZ6N73ohvHJ8G",
+      "senhaHash": "$2a$08$2E573rEAAxrOYEpyFokT7Oj.0ZPBOlKN0fsAovPEWQr8dWs14nHcC",
       "cargo": "Administrador",
       "ativo": true,
       "requerTrocaSenha": false
