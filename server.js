@@ -45,17 +45,18 @@ function geradorSenhaAleatoria() {
 }
 
 // ============================================================
-// CLASSES DE MODELOS EMBUTIDAS
+// CLASSES DE MODELOS EMBUTIDAS (COM SUPORTE A LGPD)
 // ============================================================
 
 class Familia {
-    constructor(id, nome, documento, endereco, telefone, necessitaCesta = true) {
+    constructor(id, nome, documento, endereco, telefone, necessitaCesta = true, lgpdAceite = false) {
         this.id = id;
         this.nome = nome;
         this.documento = documento;
         this.endereco = endereco;
         this.telefone = telefone;
         this.necessitaCesta = necessitaCesta;
+        this.lgpdAceite = lgpdAceite;
     }
 
     getId() { return this.id; }
@@ -68,7 +69,8 @@ class Familia {
             nome: this.nome,
             documentoMascarado: docMascarado,
             telefone: this.telefone,
-            necessitaCesta: this.necessitaCesta
+            necessitaCesta: this.necessitaCesta,
+            lgpdAceite: this.lgpdAceite
         };
     }
 
@@ -79,7 +81,8 @@ class Familia {
             documento: this.documento,
             endereco: this.endereco,
             telefone: this.telefone,
-            necessitaCesta: this.necessitaCesta
+            necessitaCesta: this.necessitaCesta,
+            lgpdAceite: this.lgpdAceite
         };
     }
 }
@@ -238,8 +241,8 @@ let bancoVoluntarios = [
 
 const estadoInicial = {
     familias: [
-        { id: 1, nome: 'Daniela Weder Morinigo', doc: '2.581.604', endereco: 'Rua 14 de Julho, 5141', tel: '(67) 99893-0679', necessitaCesta: true },
-        { id: 2, nome: 'Gislaine Aparecida Cordeiro', doc: '3.124.890', endereco: 'Av. Afonso Pena, 1200', tel: '(67) 99123-4567', necessitaCesta: true }
+        { id: 1, nome: 'Daniela Weder Morinigo', doc: '2.581.604', endereco: 'Rua 14 de Julho, 5141', tel: '(67) 99893-0679', necessitaCesta: true, lgpdAceite: true },
+        { id: 2, nome: 'Gislaine Aparecida Cordeiro', doc: '3.124.890', endereco: 'Av. Afonso Pena, 1200', tel: '(67) 99123-4567', necessitaCesta: true, lgpdAceite: true }
     ],
     estoque: [
         { codigo: 101, categoria: 'Alimento', descricao: 'Arroz 5kg', quantidadeEstoque: 10, dataValidade: '2026-11-20' },
@@ -277,7 +280,15 @@ function salvarDadosEmDisco() {
         const dadosParaSalvar = {
             familias: bancoFamilias.map(f => {
                 const dados = (typeof f.getDadosCompletosAutenticados === 'function') ? f.getDadosCompletosAutenticados({ ativo: true }) : f;
-                return { id: dados.id || f.id, nome: dados.nome || f.nome, doc: dados.documento || f.doc, endereco: dados.endereco || f.endereco, tel: dados.telefone || f.tel, necessitaCesta: dados.necessitaCesta !== undefined ? dados.necessitaCesta : true };
+                return { 
+                    id: dados.id || f.id, 
+                    nome: dados.nome || f.nome, 
+                    doc: dados.documento || f.doc, 
+                    endereco: dados.endereco || f.endereco, 
+                    tel: dados.telefone || f.tel, 
+                    necessitaCesta: dados.necessitaCesta !== undefined ? dados.necessitaCesta : true,
+                    lgpdAceite: dados.lgpdAceite !== undefined ? dados.lgpdAceite : false
+                };
             }),
             estoque: bancoEstoque.map(i => ({
                 codigo: i.codigo, categoria: i.categoria, descricao: i.descricao, quantidadeEstoque: i.quantidadeEstoque,
@@ -304,7 +315,7 @@ function carregarDadosDoDisco() {
             dadosRaw = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
         }
 
-        bancoFamilias = (dadosRaw.familias || []).map(f => new Familia(f.id, f.nome, f.doc || '000.000.000-00', f.endereco || 'Rua Padrão', f.tel, f.necessitaCesta));
+        bancoFamilias = (dadosRaw.familias || []).map(f => new Familia(f.id, f.nome, f.doc || '000.000.000-00', f.endereco || 'Rua Padrão', f.tel, f.necessitaCesta, f.lgpdAceite || false));
         bancoEstoque = (dadosRaw.estoque || []).map(i => {
             if (i.categoria === 'Alimento') {
                 return new Alimento(i.codigo, i.descricao, i.quantidadeEstoque, i.dataValidade);
@@ -452,7 +463,7 @@ app.get('/api/me', autenticarToken, (req, res) => {
 });
 
 // ============================================================
-// ENDPOINTS DE GESTÃO DE FAMÍLIAS
+// ENDPOINTS DE GESTÃO DE FAMÍLIAS (COM TRAVA LGPD)
 // ============================================================
 
 app.get('/api/familias', autenticarToken, (req, res) => {
@@ -468,10 +479,14 @@ app.get('/api/familias', autenticarToken, (req, res) => {
 
 app.post('/api/familias/novo', autenticarToken, (req, res) => {
     try {
-        const { nome, documento, endereco, telefone } = req.body;
+        const { nome, documento, endereco, telefone, lgpdAceite } = req.body;
 
         if (!nome || !documento || !endereco || !telefone) {
             return res.status(400).json({ success: false, message: 'Preencha todos os campos obrigatórios da família.' });
+        }
+
+        if (!lgpdAceite) {
+            return res.status(400).json({ success: false, message: 'Cadastro recusado: O consentimento com o Termo LGPD é obrigatório.' });
         }
 
         const novaFamilia = new Familia(
@@ -480,13 +495,14 @@ app.post('/api/familias/novo', autenticarToken, (req, res) => {
             documento,
             endereco,
             telefone,
+            true,
             true
         );
 
         bancoFamilias.push(novaFamilia);
         salvarDadosEmDisco();
 
-        res.json({ success: true, message: `Família '${nome}' cadastrada com sucesso!`, familia: novaFamilia.getPerfilPublico() });
+        res.json({ success: true, message: `Família '${nome}' cadastrada com sucesso e consentimento LGPD registrado!`, familia: novaFamilia.getPerfilPublico() });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
     }

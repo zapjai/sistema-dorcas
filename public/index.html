@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -218,7 +218,7 @@
                 
                 <div class="operations-container">
                     
-                    <!-- 1. CADASTRO DE FAMÍLIA ASSISTIDA -->
+                    <!-- 1. CADASTRO DE FAMÍLIA ASSISTIDA COM TERMO LGPD -->
                     <div class="panel">
                         <h2><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Cadastrar Família Assistida</h2>
                         <form id="formCadFamilia" onsubmit="cadastrarFamilia(event)">
@@ -226,6 +226,15 @@
                             <div class="form-group"><label for="cadDoc">Documento de Identificação (CPF/RG):</label><input type="text" id="cadDoc" required placeholder="Ex: 123.456.789-00"></div>
                             <div class="form-group"><label for="cadEndereco">Endereço Residencial:</label><input type="text" id="cadEndereco" required placeholder="Ex: Rua A, 123"></div>
                             <div class="form-group"><label for="cadTelefone">Telefone de Contato:</label><input type="text" id="cadTelefone" required placeholder="Ex: (67) 99999-0000"></div>
+                            
+                            <!-- Caixa do Termo de Consentimento LGPD -->
+                            <div class="form-group lgpd-box">
+                                <label for="cadLgpd" class="checkbox-label">
+                                    <input type="checkbox" id="cadLgpd" required>
+                                    <span>Concordo com o <strong>Termo de Consentimento LGPD</strong> (Lei nº 13.709/2018) para o tratamento e armazenamento de dados pessoais sensíveis estritamente para fins assistenciais.</span>
+                                </label>
+                            </div>
+
                             <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-save" aria-hidden="true"></i> Salvar Família</button>
                         </form>
                         <div id="msgCadFamilia" class="feedback-msg" aria-live="polite"></div>
