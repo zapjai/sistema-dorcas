@@ -56,37 +56,50 @@ Antes de iniciar, certifique-se de ter instalado em sua máquina:
 
 1. **Clone o repositório:**
   git clone [https://github.com/seu-usuario/aplicativo-dorcas.git](https://github.com/seu-usuario/aplicativo-dorcas.git)
+
   cd aplicativo-dorcas
 
-   Instale as dependências: npm install
-⚙️ Configuração de Variáveis de AmbientePara manter a segurança das chaves secretas e credenciais de e-mail, configure as variáveis no seu ambiente de execução:
-Variável                                  Descrição                                                  Exemplo
-PORT                                      Porta onde o servidor Express irá rodar (Padrão: 3000)     3000
-SECRET_KEY                                Chave secreta de assinatura dos tokens JWT                 sua_chave_secreta_jwt
-SMTP_USER                                 E-mail remetente para envio de senhas temporárias          seu-email@gmail.com
-SMTP_PASS                                 Senha de aplicativo / token SMTP                           xxxx xxxx xxxx xxxx
+Instale as dependências: npm install
+   
+⚙️ Configuração de Variáveis de Ambiente
+
+Para manter a segurança das chaves secretas e credenciais de e-mail, configure as variáveis no seu ambiente de execução:
+
+|Variável  |Descrição  |Exemplo
+| :--- | :--- | :---|
+|PORT  |Porta onde o servidor Express irá rodar (Padrão: 3000) |3000
+|SECRET_KEY |Chave secreta de assinatura dos tokens JWT         |sua_chave_secreta_jwt
+|SMTP_USER  |E-mail remetente para envio de senhas temporárias  |seu-email@gmail.com
+|SMTP_PASS  |Senha de aplicativo / token SMTP                   |xxxx xxxx xxxx xxxx
 
 💡 Nota: Opcionalmente, crie um arquivo key.env na raiz do projeto contendo apenas a senha de aplicativo SMTP.
 
 🎬 Como Executar
-Defina a chave secreta (Opcional no terminal) e inicie o servidor
-:Linux / macOS: export SECRET_KEY="sua_chave_ultra_secreta"
+Defina a chave secreta (Opcional no terminal) e inicie o servidor:
+
+Linux / macOS: export SECRET_KEY="sua_chave_ultra_secreta"
+
 node server.js
-Windows (PowerShell):
-$env:SECRET_KEY="sua_chave_ultra_secreta"
+
+Windows (PowerShell): $env:SECRET_KEY="sua_chave_ultra_secreta"
+
 node server.js
-Windows (CMD):
-set SECRET_KEY=sua_chave_ultra_secreta
+
+Windows (CMD): set SECRET_KEY=sua_chave_ultra_secreta
+
 node server.js
 
 Acesse a aplicação no seu navegador:http://localhost:3000
 
 ♿ Acessibilidade e InterfaceA interface do Aplicativo Dorcas foi desenhada seguindo as diretrizes WCAG AA (Web Content Accessibility Guidelines):
-Navegação Semântica: Estruturação via <main>, <header>, <nav>, <section> e <article>.
-Atributos WAI-ARIA: Suporte completo a leitores de tela (como NVDA e VoiceOver) com role="tablist", role="tabpanel", aria-selected e aria-live.
-Foco e Contraste: Razão de contraste mínima aprovada para visibilidade e estados de foco destacados (:focus-visible) para navegação por teclado (Tab).
+- **Navegação Semântica**: Estruturação via &lt;main&gt;, &lt;header&gt;, &lt;nav&gt;, &lt;section&gt; e &lt;article&gt;.
+- **Atributos WAI-ARIA**: Suporte completo a leitores de tela (como NVDA e VoiceOver) com role="tablist", role="tabpanel", aria-selected e aria-live.
+- **Foco e Contraste**: Razão de contraste mínima aprovada para visibilidade e estados de foco destacados (:focus-visible) para navegação por teclado (Tab).
 
-📂 Estrutura do ProjetoPlaintextaplicativo-dorcas/
+📂 Estrutura do Projeto
+
+```text
+aplicativo-dorcas/
 ├── public/
 │   ├── css/
 │   │   └── style.css       # Estilização responsiva e regras de impressão
@@ -98,5 +111,8 @@ Foco e Contraste: Razão de contraste mínima aprovada para visibilidade e estad
 ├── server.js               # Servidor Express, rotas da API e regras de negócio
 ├── package.json            # Dependências e scripts do projeto
 └── README.md               # Documentação do projeto
+```
 
-📜 LicençaEste projeto é disponibilizado sob a licença MIT.
+📜 Licença
+
+Este projeto é disponibilizado sob a licença MIT.
